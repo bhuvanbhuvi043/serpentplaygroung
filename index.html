@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>Word Serpent</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="indexdesign.css">
+    <script src="home.js" defer></script>
+    </head>
+<body>
+<header>
+       <a href="#" class="logo"><i >&#x1F40D;</i>Word Serpent: Sentence Solver</a>
+          
+        <div class="icons">
+            <div class="hearts-container">
+                <i class="fas fa-heart"></i>
+                <i class="fas fa-heart"></i>
+                <i class="fas fa-heart"></i>
+            </div>
+            <button id="toggleMusicButton" ></button>
+            <button id="get-life-button" class="btn fas fa-heart"> +</button>
+            <video id="ad-video" style="display: none;">
+                <!-- Include your video source here -->
+                <source src="video.mp4" type="video/mp4">
+            </video>
+        </div>    
+    
+        <div class="menu-bar" id="menu-bar">
+            <i class="fas fa-bars"></i>
+            <div class="menu-dropdown" id="menu-dropdown">
+                <ul>
+                    <li>
+                        <label for="speed-control-stage">Snake Speed:</label>
+                        <input type="range" id="speed-control-stage" class="menu-range" min="100" max="1000" step="100" value="400">
+                    </li>
+                    <li><a href="">about-us</a></li>
+                    <li><a href="">help</a></li>
+                </ul>
+            </div>
+        </div>
+
+</header> 
+
+<section class="home" id="home">
+    <div class="swiper mySwiper home-slider">
+        <div class="swiper-wrapper">
+    
+            <div class="swiper-slide slide" id="stage-1">
+                <div class="content">
+                    <span>Snake is Hungry(practice Level)</span>
+                    <h3>Stage - 1</h3>
+                    <div id="stars-1"></div>
+                    <p>A Snake must eat all letters in English. To advance to the next stage, you need to earn at least two stars.</p>
+                    <a href="stage1.html" id="start-button-stage1" class="btn" onclick="startStage(1)">Start-Now</a>
+                    <button id="replay-button-stage1"><a href="stage1.html" class="btn" onclick="replayStage(1)">Replay</a></button>
+                    <button id="next-stage-button-stage1"><a href="stage2.html" class="btn" onclick="goToNextStage(1)">Next-Stage</a></button>
+                </div>
+                <div class="image">
+                    <img src="snake-cartoon1.jpg" alt="">
+                </div>
+            </div>
+    
+            <div class="swiper-slide slide" id="stage-2">
+                <div class="content">
+                   <span>Snake is Hungry(Level of Biginner)</span>
+                   <h3>Stage - 2</h3>
+                   <div id="stars-2"></div>
+                   <p>the snake wants to eat the A-Z alphabets orderly. here , may test your concentration level, so be prepared for some challenges. To advance to the next stage, you need to earn at least two stars.</p>
+                   <a href="stage2.html" id="start-button-stage2" class="btn" onclick="startStage(2)">Start-Now</a>
+                   <button id="replay-button-stage2"><a href="stage2.html" class="btn" onclick="replayStage(2)">Replay</a></button>
+                   <button id="next-stage-button-stage2"><a href="stage3.html" class="btn" onclick="goToNextStage(2)">Next-Stage</a></button>
+                </div>
+                <div class="image">
+                   <img src="cartoon-green-snake-on-tree-branch-vector-22962216.jpg" alt="">
+                </div>
+            </div>
+    
+            <div class="swiper-slide slide" id="stage-3">
+                <div class="content">
+                   <span>Three letter words - Two questions</span>
+                   <h3>Stage - 3</h3>
+                   <div id="stars-3"></div>
+                   <p>Here they are given 3 letters & 2 questions and You have to correctly find 2 words from them.Words alone can appease the snake. there are only allow  3 -letter words.</p>
+                   <a href="stage3.html" id="start-button-stage3" class="btn" onclick="startStage(3)">Start-Now</a>
+                   <button id="replay-button-stage3"><a href="stage3.html" class="btn" onclick="replayStage(3)">Replay</a></button>
+                   <button id="next-stage-button-stage3"><a href="stage4.html" class="btn" onclick="goToNextStage(3)">Next-Stage</a></button>
+                </div>
+                <div class="image">
+                   <img src="cartoon-cute-baby-snake-sitting-vector-38203918.jpg" alt="">
+                </div>
+            </div>
+    
+            <div class="swiper-slide slide" id="stage-4">
+                <div class="content">
+                   <span>Four letter words - four questions</span>
+                   <h3>Stage - 4</h3>
+                   <div id="stars-4"></div>
+                   <p>Here they are given 4 letters & 4 questions and You have to correctly find 4 words from them.Words alone can appease the snake. there are only allow  4 -letter words.</p>
+                   <a href="stage4.html" id="start-button-stage4" class="btn" onclick="startStage(4)">Start-Now</a>
+                   <button id="replay-button-stage4"><a href="stage4.html" class="btn" onclick="replayStage(4)">Replay</a></button>
+                   <button id="next-stage-button-stage4"><a href="stage5.html" class="btn" onclick="goToNextStage(4)">Next-Stage</a></button>
+                </div>
+                <div class="image">
+                   <img src="snake-cartoon3.jpg" alt="">
+                </div>
+            </div>
+
+            <div class="swiper-slide slide" id="stage-5">
+                <div class="content">
+                   <span>Three letter words - six questions</span>
+                   <h3>Stage - 5</h3>
+                   <div id="stars-5"></div>
+                   <p>Here they are given 3 letters & 6 questions and You have to correctly find 6 words from them.Words alone can appease the snake. there are only allow  3 -letter words.</p>
+                   <a href="stage5.html" id="start-button-stage5" class="btn" onclick="startStage(5)">Start-Now</a>
+                   <button id="replay-button-stage5"><a href="stage5.html" class="btn" onclick="replayStage(5)">Replay</a></button>
+                   <button id="next-stage-button-stage5"><a href="stage6.html" class="btn" onclick="goToNextStage(5)">Next-Stage</a></button>
+                </div>
+                <div class="image">
+                   <img src="snake cartoon2.jpg" alt="">
+                </div>
+            </div>
+
+            <div class="swiper-slide slide" id="stage-6">
+                <div class="content">
+                   <span>four letter word - five questions</span>
+                   <h3>Stage - 6</h3>
+                   <div id="stars-6"></div>
+                   <p>Here they are given 4 letters & 5 questions and You have to correctly find 5 words from them.Words alone can appease the snake. there are only allow  4 -letter words.</p>
+                   <a href="stage6.html" id="start-button-stage6"  class="btn" onclick="startStage(6)">Start-Now</a>
+                    <button id="replay-button-stage6"><a href="stage6.html" class="btn" onclick="replayStage(6)">Replay</a></button>
+                    <button id="next-stage-button-stage6"><a href="stage7.html" class="btn" onclick="goToNextStage(6)">Next-Stage</a></button>
+                </div>
+                <div class="image">
+                   <img src="snake-alpha.jpg" alt="">
+                </div>
+            </div>
+
+            <div class="swiper-slide slide" id="stage-6">
+                <div class="content">
+                   <span>five letter word - four questions</span>
+                   <h3>Stage - 7</h3>
+                   <div id="stars-7"></div>
+                   <p>Here they are given 4 letters & 4 questions and You have to correctly find 4 words from them.Words alone can appease the snake. there are only allow  5 -letter words.</p>
+                   <a href="stage7.html" id="start-button-stage7"  class="btn" onclick="startStage(7)">Start-Now</a>
+                    <button id="replay-button-stage7"><a href="stage7.html" class="btn" onclick="replayStage(7)">Replay</a></button>
+                    <button id="next-stage-button-stage7"><a href="stage8.html" class="btn" onclick="goToNextStage(7)">Next-Stage</a></button>
+                </div>
+                <div class="image">
+                   <img src="snakecartoon.jpg" alt="">
+                </div>
+            </div>
+        
+        </div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-pagination"></div>
+    </div>
+</section>
+    
+
+
+
+<audio id="bgMusic" autoplay loop>
+    <source src="Ghostrifter-Official-Deflector(chosic.com).mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+</body>
+</html>

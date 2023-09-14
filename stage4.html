@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="design.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <title>&#x1F40D;Word Serpent</title>
+</head>
+<body>
+    
+    <div id="container">
+        <div id="left-panel">
+            <button id="back" >&#8592;</button>
+            <button id="toggleMusicButton" ></button>
+            <h1><span id="snake">&#x1F40D;</span>Word Serpent</h1>
+            <div id="scoreAndStars">
+                <div id="score">Score: <span id="scoreVal">0</span></div>
+                <div id="stars"></div>
+
+            </div>
+            <h1>Please Answer:-</h1>
+          
+            <ol id="question-list" class="question-list">
+                <li id="question1Container">The traffic light turned red, indicating that it was time to <span id="question1" class="letter-placeholder">--?--</span> the car</li>
+                <li id="question2Container" style="display: none;">2. There's a beautiful flower in that <span id="question2" class="letter-placeholder">--?--</span> by the garden fence.</li>
+                <li id="question3Container" style="display: none;">3. He promised to <span id="question3" class="letter-placeholder">--?--</span> the letter before the end of the day.</li>
+                <li id="question4Container" style="display: none;">4. After cooking, remember to wash the <span id="question4" class="letter-placeholder">--?--</span> and pans thoroughly</li>
+            </ol>
+            <div id="threeletters"><ul id="alphabet-list-1" class="alphabet-1">
+                <!-- List items for each letter -->
+            </ul></div>
+            <ul id="alphabet-list-2" class="alphabet-2">
+                <!-- List items for each letter -->
+            </ul>
+          
+            
+            <div id="pauseButton">
+                <button class="direction-button" data-direction="up">&#8593;</button>
+                <div class="direction-buttons">
+                    <button class="direction-button" data-direction="left">&#8592;</button>
+                    <button id="continueButton" class="direction-button">Pause</button>
+                    <button class="direction-button" data-direction="right">&#8594;</button>
+                </div>
+                <button class="direction-button" data-direction="down">&#8595;</button>
+            </div>
+        </div>
+        <div id="game-panel">
+            <canvas id="gameboard" width="600" height="600"></canvas>
+            <div id="button-container">
+                <button id="start-button">Start</button>
+                <button id="replay-button">Replay</button>
+                <button id="next-stage-button">Next Stage</button>
+            </div>
+        </div>
+        
+    </div>
+    <audio id="bgMusic" src="Komiku_-_07_-_Last_Boss__Lets_see_what_we_got(chosic.com) (1).mp3" loop></audio>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Get the back button element
+            const backButton = document.getElementById("back");
+      
+            // Add a click event listener to the back button
+            backButton.addEventListener("click", function() {
+                // Redirect to the index.html page
+                window.location.href = "index.html";
+            });
+          
+        });
+        
+    </script>
+<script src="stage4script.js"></script>
+
+</body>
+</html>
