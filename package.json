@@ -1,0 +1,10 @@
+{
+  "name": "word-serpent",
+  "version": "1.0.0",
+  "description": "A browser-based word snake game.",
+  "private": true,
+  "scripts": {
+    "start": "npx --yes serve@latest . -l 8080"
+  },
+  "license": "BSD-2-Clause"
+}

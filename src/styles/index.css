@@ -1,0 +1,454 @@
+
+:root{
+    --green:#27ae60;
+    --black:#192a56;
+    --light-color:#666;
+    --box-shadow:0.5rem 1.5rem rgba(0,0,0,.1);
+ }
+ #toggleMusicButton{
+    position: absolute;
+    top: 10px;
+    left: 890px;
+    margin-top: 4px;
+    background-color: #8fd4ef;
+}
+ #get-life-button{
+    position: absolute;
+    top: 10px;
+    left: 950px; 
+ }
+ @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@200;300;400;600;700&display=swap');
+*{
+    font-family: 'Nunito Sans', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    outline: none;
+    border: none;
+    text-transform: capitalize;
+    transition: all .2s linear;
+}
+html{
+    font-size: 62.5%;
+    overflow-x: hidden;
+    scroll-padding-top: 5.5rem;
+    scroll-behavior: smooth;
+}
+section{
+    padding: 2rem 9%;
+    background-color: rgb(14, 242, 242);
+}
+section:nth-child(even){
+    background: #83e0ec;
+}
+.sub-heading{
+    text-align: center;
+    color:var(--green);
+    font-size: 2rem;
+    padding-top: 1rem;
+}
+.heading{
+    text-align: center;
+    color:var(--black);
+    font-size: 3rem;
+    padding-bottom: 2rem;
+    text-transform: uppercase;
+}
+header {
+    display: inline-block;
+    padding: 2rem 5%; /* Adjust padding as needed */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #8fd4ef;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1800;
+    box-shadow: var(--box-shadow);
+}
+.header-right {
+    display: flex;
+    align-items: center;
+}
+header .logo{
+    display: inline-block;
+    color: var(--black);
+    font-size: 2.5rem;
+    font-weight:bolder;
+    text-align: left;
+    padding-right: 430px;
+    font-family: cursive;
+}
+#menu-bars{
+    color: var(--black);
+}
+header .logo i{
+    color:var(--green);
+}
+header .icons{
+    display: inline-block;
+    text-align:right;
+    padding-left: 45.1px;
+    
+}
+header .icons i,
+header .icons a{
+    cursor: pointer;
+    display: inline-block;
+    margin-left: 1rem;
+    height: 4rem;
+    line-height: 4rem;
+    width:4.5rem;
+    text-align: center;
+    font-size: 2.7rem;
+    color:rgb(248, 4, 57);
+    border-radius: 50%;
+    background: #8fd4ef;
+}
+header .icons i:hover,
+header .icons a:hover{
+    color: #fff;
+    background: #8fd4ef;
+    transform: rotate(360deg);   
+}
+header .icons #menu-bars{
+    display: inline-block;
+   margin-left: 75px;
+}
+#stars-1{
+    font-size: 4em;
+    background-color:rgb(63, 189, 209);
+    padding:.8rem 3rem;
+    border-radius: .5px;
+    box-shadow: 0px 0px 10px rgba(134, 232, 245, 0.3);
+    color: gold;
+    margin-top: 5px;
+    margin-left: 120px;
+    margin-right: 150px;
+}
+#stars-2{
+    font-size: 4em;
+    background-color:rgb(63, 189, 209);
+    padding:.8rem 3rem;
+    border-radius: .5px;
+    box-shadow: 0px 0px 10px rgba(134, 232, 245, 0.3);
+    color: gold;
+    margin-top: 5px;
+    margin-left: 120px;
+    margin-right: 150px;
+}
+#stars-3{
+    font-size: 4em;
+    background-color:rgb(63, 189, 209);
+    padding:.8rem 3rem;
+    border-radius: .5px;
+    box-shadow: 0px 0px 10px rgba(134, 232, 245, 0.3);
+    color: gold;
+    margin-top: 5px;
+    margin-left: 120px;
+    margin-right: 150px;
+}
+.btn{
+    margin-top: 1rem;
+    display: inline-block;
+    font-size: 1.7rem;
+    color:#fff;
+    background: var(--black);
+    border-radius: .5rem;
+    cursor:pointer;
+    padding:.8rem 3rem;
+    line-height: 1.5;
+    margin-left: 195px;
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);   
+}
+.btn:hover{
+    background: var(--green);
+    letter-spacing: .1rem;
+    box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.5);
+}
+.home .home-slider {
+    padding: 10rem; /* Add padding to the slider container */
+    border: 1px solid var(--black); /* Add a border for separation */
+    border-radius: 20px; /* Add rounded corners */
+    background-color: rgba(255, 255, 255, 0.8); /* Add a semi-transparent background */
+    box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.5); /* Add a subtle box shadow */ /*overflow: hidden; /* Hide overflow to keep the slider within the container */
+    max-width: 800px; /* Adjust the maximum width as needed */
+    height: 900px; 
+    margin-top: 100px;
+}
+.home .home-slider .slide {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem; /* Adjust the padding to control the spacing around the slide */
+    background-color: rgb(68, 204, 232);
+    box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.5);
+    text-align: center; /* Center the content within the slide */
+    max-width: 600px; /* Adjust the maximum width of the slide */
+    height: 650px; /* Adjust the height of the slide */
+    margin: 0 auto; /* Center the slide horizontally */
+    border-radius: 20px;
+}
+.home .home-slider .slide .content a.btn,
+.home .home-slider .slide .content button {
+    margin-top: 1rem;
+    display: inline-block;
+    margin: 0 auto;
+    border-radius: 8px;
+}
+.home .home-slider .slide .content a.btn:hover,
+.home .home-slider .slide .content button:hover {
+    background: var(--green);
+    letter-spacing: .1rem;
+    box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.5);
+}
+#stars-1,
+#stars-2,
+#stars-3,
+#stars-4,
+#stars-5,
+#stars-6,
+#stars-7 {
+    text-align: center;
+    margin-top: 20px; /* Adjust the margin as needed */
+    display: inline-block; /* Display stars as inline-block elements */
+    font-size: 4em; /* Adjust the font size as needed */
+    background-color: rgb(63, 189, 209);
+    padding: 0.8rem 1.5rem; /* Adjust padding for spacing between stars */
+    border-radius: 50%; /* Make stars round */
+    box-shadow: 0px 0px 10px rgba(134, 232, 245, 0.3);
+    color: gold;
+    margin-left: 10px; /* Adjust the margin between stars */
+    margin-right: 10px; /* Adjust the margin between stars */
+}
+.swiper-pagination-bullet {
+    background: var(--green);
+    margin: 0 5px; /* Adjust the spacing between bullets */
+    width: 10px; /* Adjust the bullet size */
+    height: 10px; /* Adjust the bullet size */
+    border-radius: 50%; /* Make bullets round */
+}
+.home .home-slider .slide .content span,
+.home .home-slider .slide .content h3,
+.home .home-slider .slide .content p {
+    font-size: 1.5rem; /* Adjust the font size */
+}
+.home .home-slider .slide .content{
+    flex:1 1 25rem;
+    margin-top: 45px;
+}
+.home .home-slider .slide .image{
+    flex:1 1 25rem;
+    margin-bottom: -10px;
+    margin-top: 20px;
+}
+.home .home-slider .slide .image img{
+    width:30%;
+    border-radius: 20% 20% 50% 50% ;
+    margin-left: 60px;
+    margin-bottom: -10px;
+    padding: 20px; /* Adjust as needed */
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.4);
+}
+.home .home-slider .slide .content span {
+    color: var(--green);
+    font-size: 2rem;
+    margin-top: 10px; /* Adjust the margin as needed */
+}
+.home .home-slider .slide .content h3 {
+    color: var(--black);
+    font-size: 4rem;
+    margin-top: 20px; /* Adjust the margin as needed */
+}
+.home .home-slider .slide .content p {
+    color: var(--light-color);
+    font-size: 1.8rem;
+    padding: 2rem 0; /* Adjust the padding as needed */
+    line-height: 1.5;
+}
+.swiper-pagination-bullet-active{
+    background: var(--green);   
+}
+.menu-bar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+    font-size: 35px;
+    margin-top: 2rem;
+    margin-right: 10px;
+}
+.menu-dropdown ul li {
+    font-size: 1.6rem; /* Adjust the font size as needed */
+    color: var(--black); /* Change the color to your desired color */
+    margin-bottom: 1rem; /* Add spacing between list items */
+} /* Menu Options */
+.menu-options {
+    display: flex;
+    align-items: center;
+    gap: 10rem;
+    margin-right: 20px; /* Adjust margin for spacing */
+}
+.menu-options label {
+    font-size: 3.2rem;
+    color: var(--black);
+}
+.menu-options input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px; /* Adjust margin for spacing */
+}
+.menu-options input[type="range"] {
+    width: 100px;
+    height: 10px;
+    background-color: var(--light-color);
+    border: none;
+    outline: none;
+    border-radius: 5px;
+}
+.menu-options button {
+    padding: 0.5rem 1rem;
+    font-size: 1.2rem;
+    background-color: var(--green);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}/* Dropdown Menu *//* Dropdown Menu */
+.menu-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0; /* Position to the right */
+    background-color:#8fd4ef;
+    border: 2px solid var(--black);
+    border-radius: 10px;
+    box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.5);
+    padding: 5rem;
+    z-index: 1000;
+}
+.menu-bar.active .menu-dropdown {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    header {
+      padding: 1rem 1rem; /* Adjust padding for mobile */
+    }
+  
+    header .logo {
+      font-size: 2rem; /* Adjust font size for mobile */
+      padding-right: 10px; /* Adjust padding for mobile */
+    }
+  
+    /* Adjust other header elements similarly */
+  }
+  @media (max-width: 768px) {
+    .menu-dropdown {
+        display: none;
+    position: absolute;
+    top: 100%;
+    right: 0; /* Position to the right */
+    background-color:#8fd4ef;
+    border: 2px solid var(--black);
+    border-radius: 10px;
+    box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.5);
+    padding: 5rem;
+    z-index: 1000;
+    }
+  }
+  @media (max-width: 768px) {
+    #stars-1,
+    #stars-2,
+    #stars-3,
+    #stars-4,
+    #stars-5,
+    #stars-6,
+    #stars-7 {
+        text-align: center;
+        margin-top: 20px; /* Adjust the margin as needed */
+        display: inline-block; /* Display stars as inline-block elements */
+        font-size: 4em; /* Adjust the font size as needed */
+        background-color: rgb(63, 189, 209);
+        padding: 0.8rem 1.5rem; /* Adjust padding for spacing between stars */
+        border-radius: 50%; /* Make stars round */
+        box-shadow: 0px 0px 10px rgba(134, 232, 245, 0.3);
+        color: gold;
+        margin-left: 10px; /* Adjust the margin between stars */
+        margin-right: 10px; /* Adjust the margin between stars */
+    }
+  }
+  /* Add styles for smaller screens (mobile phones) */
+  @media (max-width: 768px) {
+    /* Adjust font size for smaller screens */
+    html {
+      font-size: 55%;
+    }
+  
+    /* Modify header styles for mobile */
+    header {
+      padding: 1rem 2rem;
+    }
+  
+    /* Modify section styles for mobile */
+    section {
+      padding: 2rem;
+    }
+    #toggleMusicButton{
+        position: absolute;
+        top: 10px;
+        left: 890px;
+        margin-top: 4px;
+        background-color: #8fd4ef;
+    }
+     #get-life-button{
+        position: absolute;
+        top: 10px;
+        left: 950px; }
+    /* Add styles for mobile navigation menu */
+    header .icons #menu-bars {
+      display: inline-block;
+    }
+  
+    .home .home-slider .slide .content h3 {
+        font-size: 1.5rem; /* Adjust font size for mobile */
+      }
+    
+      .home .home-slider .slide .content p {
+        font-size: 1rem; /* Adjust font size for mobile */
+      }
+    
+      /* Adjust padding and margins for mobile */
+      .home .home-slider .slide {
+        padding: 1rem; /* Adjust padding for mobile */
+      }
+    
+      .home .home-slider .slide .image img {
+        width: 100%; /* Make images full width for mobile */
+        max-width: 100%; /* Limit the image size to its container width */
+        height: auto; /* Maintain the aspect ratio */
+      }
+    
+      .btn {
+        font-size: 1.8rem; /* Adjust font size for mobile */
+        padding: 0.5rem 1rem; /* Adjust padding for mobile */
+        margin: 0; /* Remove margin for mobile */
+      }
+      .home .home-slider .slide .content {
+        flex: 1 1 100%; /* Full width for mobile */
+      }
+    /* Adjust text styles for mobile */
+    .home .home-slider .slide .content span,
+    .home .home-slider .slide .content h3,
+    .home .home-slider .slide .content p {
+      color: var(--light-color);
+      font-size: 1.8rem;
+      padding: 2rem 0;
+      line-height: 1.5;
+      margin-left: 5px;
+    }
+  }
+  

@@ -1,0 +1,287 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    background-color: #6ec6b2;
+    text-align: center;
+}
+#back {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+h1 {
+    color: rgb(13, 23, 65);
+    margin-left: 25px;
+    margin-bottom: 25px;
+    font-size:xx-large;
+    font-family: cursive;
+    margin-top: 5px;
+}
+#stars{
+    font-size: 2em;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 0.5em;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    color: gold;
+    margin-top: 5px;
+}
+#container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+#left-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-left: 2em;
+    width: 30%;   
+}
+#game-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    height: 100%;
+    width: 90%;
+    background-color: aqua;
+}
+#gameboard {  
+    border: 3px solid;
+}
+#score {
+    font-size: 2em;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 0.5em;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    color: white;
+    margin-left: 1px;
+    margin-top: 5px;
+}
+#scoreAndStars {
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+}
+button {
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 0.5em 1em;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+    margin: 0.5em 0;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+#pauseButton {
+    position: relative;
+    margin-top: 0px;
+    margin-left: 25px;
+}
+button:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.4);
+}
+.direction-buttons {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    grid-gap: 15px;
+    margin-top: 0.1px;
+}
+.direction-button {
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 1em;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s;   
+}
+.direction-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.4);
+}
+#snake{
+    border-color: black;
+    font-size:xx-large;
+}
+.speed{
+    margin-top: 30px;
+    margin-left: 100px;
+}
+#alphabet-list{
+    font-size: 2em;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 0.5em;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    color: white;
+    margin-left: 1px;
+    margin-bottom: 25px;
+}
+#alphabet-list-2{
+    display: none;
+}
+#alphabet-list-1{
+    font-size: 2em;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 0.5em;
+    border-radius: 12px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    color: white;
+    margin-left: 1px;
+    margin-bottom: 25px;
+}
+.question-container {
+    display: flex; /* Use flexbox for layout */
+    align-items: center; /* Vertically align the content */
+}
+.question-list {
+    list-style-type: decimal; /* Use decimal numbering */
+    padding-left: 10px; /* Adjust the left padding as needed */
+}
+.question-list li {
+    font-size: 26px; /* Adjust the font size as needed */
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    margin-bottom: 10px; /* Add space between questions */
+}
+.letter-placeholder {
+    font-size: 24px; /* Adjust the font size as needed */
+    margin: 0 10px; /* Add space between the question and the list */
+}
+#alphabet-list-2{
+    font-size: 2em;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 0.5em;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    color: white;
+    margin-left: 1px;
+    margin-bottom: 25px;
+}
+.correct-word {
+    color: green;
+}
+#threeletters{
+    margin-left: 70px;
+}
+.incorrect-word {
+    color: red;
+}
+.alphabet-2 {
+    list-style-type: none;
+    margin:40px auto 0;
+    padding:0;
+    cursor: pointer;
+    width:40%;
+    text-align:center;
+}
+.alphabet {
+    list-style-type: none;
+    margin:40px auto 0;
+    padding:0;
+    cursor: pointer;
+    width:80%;
+    text-align:center;
+}
+.alphabet-2 li {
+    float:left;
+    margin:0;
+    padding:0;
+    border-right:1px solid darkgrey;
+    font-size: 23px;
+    -moz-box-sizing:border-box;
+    color:black;
+    display:inline-block;
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    box-sizing:border-box;
+    width:28.84%;
+}
+.alphabet li {
+    float:left;
+    margin:0;
+    padding:0;
+    border-right:1px solid darkgrey;
+    font-size: 23px;
+    -moz-box-sizing:border-box;
+    color:black;
+    display:inline-block;
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    box-sizing:border-box;
+    width:8.84%;
+}
+.alphabet-2 li:last-child {
+    border-right: none;
+}
+.alphabet-2 li:hover {
+    color:rgb(35, 44, 142);
+    background-color: lightgrey;
+}
+.alphabet li:last-child {
+    border-right: none;
+}
+.alphabet li:hover {
+    color:rgb(35, 44, 142);
+    background-color: lightgrey;
+}
+#button-container { 
+    text-align: center;
+    margin-top: 5px;
+    margin-left: 60px;
+    font-size: 25px;
+}
+#button-container button {
+    margin: 5px;
+}
+#replay-button,
+#next-stage-button {
+    display: none;
+}
+#toggleMusicButton{
+    position: absolute;
+    top: 10px;
+    left: 290px;
+}
+.btn{  
+    display: inline-block;
+    font-size: 1.7rem;
+    color:#fff;
+    background: var(--black);
+    border-radius: .5rem;
+    cursor:pointer;
+}
+.btn:hover{
+    background: var(--green);
+    letter-spacing: .1rem;
+}
+.question-list {
+    list-style-type: none;
+    padding: 0;
+}
+.question-item {
+    margin-bottom: 20px;
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    color: #333;
+}
+.letter-placeholder {
+    font-weight: bold;
+    color: #15be1d; /* Change the color to your preference */
+    text-decoration: underline;
+}/* Style for the hidden question */
+.question-item.hidden {
+    display: none;
+}
