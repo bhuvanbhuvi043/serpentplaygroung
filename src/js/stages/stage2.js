@@ -526,6 +526,7 @@
     }
 }// Create an instance of the SnakeGame class
 const snakeGame = new SnakeGame();
+window.snakeGame = snakeGame;
 snakeGame.initializeButtons();
 snakeGame.showStartButton();
 snakeGame.pauseBackgroundMusic();

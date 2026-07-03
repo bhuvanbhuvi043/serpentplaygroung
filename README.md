@@ -1,6 +1,6 @@
 # Word Serpent
 
-Word Serpent is a browser-based word and snake game. The player guides the snake through letter-based challenges, earns stars for each stage, and unlocks the next implemented level after earning enough stars.
+Word Serpent is a browser-based word and snake game. The rebuilt root game uses a single reliable canvas engine with snake body letters, apple letter effects, stage questions, stars, keyboard controls, and on-screen direction buttons.
 
 ## Folder structure
 
@@ -13,8 +13,8 @@ Word Serpent is a browser-based word and snake game. The player guides the snake
 |-- src/
 |   |-- js/             Home page and stage scripts
 |   `-- styles/         Home page and game styles
-|-- stages/             Stage 1 through Stage 7 pages
-|-- index.html          Game home screen
+|-- stages/             Legacy Stage 1 through Stage 7 pages
+|-- index.html          Rebuilt playable game
 |-- package.json        Convenience local-server scripts
 `-- LICENSE
 ```
@@ -42,5 +42,6 @@ python -m http.server 8080
 ## Notes
 
 - Stages 1-7 are implemented.
-- The old empty stage 8-10 placeholders were removed so players do not navigate into blank pages.
-- The stage speed slider stores the selected speed in browser local storage and the stages read it when they start.
+- The root `index.html` is the recommended playable game.
+- Legacy stage pages remain in `stages/` for reference.
+- The speed slider stores the selected speed in browser local storage.

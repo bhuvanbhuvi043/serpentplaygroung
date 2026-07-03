@@ -674,6 +674,7 @@ class SnakeGame {
     }
 }
 const snakeGame = new SnakeGame();
+window.snakeGame = snakeGame;
 snakeGame.initializeButtons();
 snakeGame.showStartButton();
 snakeGame.pauseBackgroundMusic();
