@@ -37,76 +37,124 @@ const stages = [
     },
     {
         title: 'Stage 2',
-        name: 'Alphabet Focus',
-        brief: 'Stay sharp and eat A to Z again while avoiding the wrong apples.',
+        name: 'Three Letter Finder',
+        brief: 'Find 3 short English words. Eat each word letter-by-letter while steering safely.',
         background: 'assets/images/photo-1628260412297-a3377e45006f.jpg',
-        targets: alphabet,
-        questions: [],
+        targets: ['CAT', 'DOG', 'SUN'],
+        questions: [
+            { before: 'A small pet that says meow is a ', after: '.', answer: 'CAT' },
+            { before: 'A loyal pet that barks is a ', after: '.', answer: 'DOG' },
+            { before: 'The bright star in the daytime sky is the ', after: '.', answer: 'SUN' },
+        ],
     },
     {
         title: 'Stage 3',
-        name: 'Three Letter Words',
-        brief: 'Build each answer by eating the next correct letter.',
+        name: 'Four Letter Starter',
+        brief: 'Find 3 four-letter words. Read the clue, then collect the correct letters.',
         background: 'assets/images/depositphotos_389158500-stock-photo-space-aircrafts-universe-fantasy-backdrop.jpg',
-        targets: ['ARE', 'HEAD'],
+        targets: ['TREE', 'FISH', 'BOOK'],
         questions: [
-            { before: 'How ', after: ' you?', answer: 'ARE' },
-            { before: 'She touched her ', after: ' to check for fever.', answer: 'HEAD' },
+            { before: 'A tall plant with branches is a ', after: '.', answer: 'TREE' },
+            { before: 'An animal that swims in water is a ', after: '.', answer: 'FISH' },
+            { before: 'You read pages inside a ', after: '.', answer: 'BOOK' },
         ],
     },
     {
         title: 'Stage 4',
-        name: 'Four Letter Words',
-        brief: 'Solve four sentence blanks in order.',
+        name: 'Four Letter Builder',
+        brief: 'Find 5 four-letter words. More words means more snake body to manage.',
         background: 'assets/images/stage5img.jpg',
-        targets: ['STOP', 'VASE', 'MAIL', 'POTS'],
+        targets: ['RAIN', 'MOON', 'STAR', 'MILK', 'HOME'],
         questions: [
-            { before: 'The traffic light said to ', after: ' the car.', answer: 'STOP' },
-            { before: 'The flower was in a ', after: '.', answer: 'VASE' },
-            { before: 'He promised to send the ', after: '.', answer: 'MAIL' },
-            { before: 'Wash the ', after: ' and pans.', answer: 'POTS' },
+            { before: 'Water falling from clouds is ', after: '.', answer: 'RAIN' },
+            { before: 'At night, we can see the ', after: '.', answer: 'MOON' },
+            { before: 'A bright point in the night sky is a ', after: '.', answer: 'STAR' },
+            { before: 'A white drink from cows is ', after: '.', answer: 'MILK' },
+            { before: 'The place where you live is your ', after: '.', answer: 'HOME' },
         ],
     },
     {
         title: 'Stage 5',
-        name: 'Fast Three Letter Words',
-        brief: 'Six short answers. Keep the snake calm and accurate.',
+        name: 'Five Letter Learner',
+        brief: 'Find 4 five-letter words. Think first, then steer with control.',
         background: 'assets/images/depositphotos_389158500-stock-photo-space-aircrafts-universe-fantasy-backdrop.jpg',
-        targets: ['EAT', 'BAT', 'BET', 'TEA', 'ATE', 'TAB'],
+        targets: ['APPLE', 'WATER', 'HOUSE', 'SMILE'],
         questions: [
-            { before: 'I like to ', after: ' pizza.', answer: 'EAT' },
-            { before: 'He swung the ', after: '.', answer: 'BAT' },
-            { before: 'I placed a ', after: ' on the race.', answer: 'BET' },
-            { before: 'Hot ', after: ' warmed us up.', answer: 'TEA' },
-            { before: 'She ', after: ' her lunch.', answer: 'ATE' },
-            { before: 'Please keep the ', after: ' open.', answer: 'TAB' },
+            { before: 'A red or green fruit is an ', after: '.', answer: 'APPLE' },
+            { before: 'We drink ', after: ' when we are thirsty.', answer: 'WATER' },
+            { before: 'A building where people live is a ', after: '.', answer: 'HOUSE' },
+            { before: 'A happy face has a ', after: '.', answer: 'SMILE' },
         ],
     },
     {
         title: 'Stage 6',
-        name: 'Four Letter Challenge',
-        brief: 'Five four-letter answers with more decoy apples.',
+        name: 'Five Letter Challenge',
+        brief: 'Find 5 five-letter words. The snake grows longer, so plan your turns.',
         background: 'assets/images/depositphotos_389158500-stock-photo-space-aircrafts-universe-fantasy-backdrop.jpg',
-        targets: ['HEAR', 'HERE', 'AREA', 'REAR', 'RARE'],
+        targets: ['PLANT', 'LIGHT', 'BREAD', 'MUSIC', 'GREEN'],
         questions: [
-            { before: 'Did you ', after: ' the news?', answer: 'HEAR' },
-            { before: 'Please sit right ', after: '.', answer: 'HERE' },
-            { before: 'Keep this ', after: ' clean.', answer: 'AREA' },
-            { before: 'The child sat in the ', after: ' seat.', answer: 'REAR' },
-            { before: 'A sunset like this is ', after: '.', answer: 'RARE' },
+            { before: 'A living thing with leaves is a ', after: '.', answer: 'PLANT' },
+            { before: 'A lamp gives us ', after: '.', answer: 'LIGHT' },
+            { before: 'A loaf is made from ', after: '.', answer: 'BREAD' },
+            { before: 'Songs and rhythm are ', after: '.', answer: 'MUSIC' },
+            { before: 'The color of grass is ', after: '.', answer: 'GREEN' },
         ],
     },
     {
         title: 'Stage 7',
-        name: 'Five Letter Finale',
-        brief: 'Build the final five-letter answers and finish the game.',
+        name: 'Six Letter Explorer',
+        brief: 'Find 4 six-letter words. Longer words make the learning challenge stronger.',
         background: 'assets/images/stage-2.jpg',
-        targets: ['STATE', 'TASTE', 'TEASE', 'TRAIT'],
+        targets: ['ORANGE', 'SCHOOL', 'GARDEN', 'FRIEND'],
         questions: [
-            { before: 'Each ', after: ' has its own flag.', answer: 'STATE' },
-            { before: 'The cake had a sweet ', after: '.', answer: 'TASTE' },
-            { before: 'Sarah would gently ', after: ' Tom.', answer: 'TEASE' },
-            { before: 'A leader needs this ', after: '.', answer: 'TRAIT' },
+            { before: 'A fruit and a color can both be ', after: '.', answer: 'ORANGE' },
+            { before: 'Children go to ', after: ' to learn.', answer: 'SCHOOL' },
+            { before: 'Flowers grow in a ', after: '.', answer: 'GARDEN' },
+            { before: 'Someone kind you like is a ', after: '.', answer: 'FRIEND' },
+        ],
+    },
+    {
+        title: 'Stage 8',
+        name: 'Six Letter Builder',
+        brief: 'Find 5 six-letter words. Use both English memory and snake control.',
+        background: 'assets/images/stage-4.jpg',
+        targets: ['BRIGHT', 'FAMILY', 'MARKET', 'WINDOW', 'FLOWER'],
+        questions: [
+            { before: 'A sunny room is very ', after: '.', answer: 'BRIGHT' },
+            { before: 'Parents, children, and relatives are ', after: '.', answer: 'FAMILY' },
+            { before: 'A place to buy food is a ', after: '.', answer: 'MARKET' },
+            { before: 'You look outside through a ', after: '.', answer: 'WINDOW' },
+            { before: 'A rose is a kind of ', after: '.', answer: 'FLOWER' },
+        ],
+    },
+    {
+        title: 'Stage 9',
+        name: 'Mixed Word Chase',
+        brief: 'Find 6 mixed five and six-letter words. Decoy apples are more distracting now.',
+        background: 'assets/images/stage-1.avif',
+        targets: ['CAMERA', 'PLANET', 'RIVER', 'TRAIN', 'CLOUD', 'FOREST'],
+        questions: [
+            { before: 'We take photos with a ', after: '.', answer: 'CAMERA' },
+            { before: 'Earth is a ', after: '.', answer: 'PLANET' },
+            { before: 'A long flow of water is a ', after: '.', answer: 'RIVER' },
+            { before: 'A vehicle that runs on tracks is a ', after: '.', answer: 'TRAIN' },
+            { before: 'A white shape in the sky is a ', after: '.', answer: 'CLOUD' },
+            { before: 'Many trees together make a ', after: '.', answer: 'FOREST' },
+        ],
+    },
+    {
+        title: 'Stage 10',
+        name: 'Word Serpent Master',
+        brief: 'Find 6 six-letter words. This is the first master stage.',
+        background: 'assets/images/pexels-frans-van-heerden-1022692.jpg',
+        targets: ['CASTLE', 'DESERT', 'ISLAND', 'POCKET', 'ROCKET', 'PUZZLE'],
+        questions: [
+            { before: 'A king may live in a ', after: '.', answer: 'CASTLE' },
+            { before: 'A dry place with lots of sand is a ', after: '.', answer: 'DESERT' },
+            { before: 'Land surrounded by water is an ', after: '.', answer: 'ISLAND' },
+            { before: 'You keep small things in a ', after: '.', answer: 'POCKET' },
+            { before: 'A spacecraft that launches upward is a ', after: '.', answer: 'ROCKET' },
+            { before: 'A game with pieces to solve is a ', after: '.', answer: 'PUZZLE' },
         ],
     },
 ];
@@ -136,6 +184,8 @@ const game = {
     lastTick: 0,
     timer: null,
     muted: true,
+    mood: 'ready',
+    moodUntil: 0,
 };
 
 function currentStage() {
@@ -168,6 +218,8 @@ function resetGame(keepMessage = true) {
     ];
     game.bodyLetters = [];
     game.particles = [];
+    game.mood = 'ready';
+    game.moodUntil = 0;
     makeApples();
     updateUi();
     draw();
@@ -219,7 +271,7 @@ function makeApples() {
         game.apples = [];
         return;
     }
-    const count = game.stageIndex < 2 ? 3 : 4;
+    const count = game.stageIndex < 1 ? 3 : game.stageIndex < 5 ? 4 : 5;
     const letters = new Set([correct]);
     while (letters.size < count) {
         const pool = currentTarget().split('').concat(alphabet);
@@ -267,6 +319,7 @@ function startGame() {
     }
     game.running = true;
     game.paused = false;
+    setMood('focus', 900);
     hideMessage();
     game.lastTick = performance.now();
     scheduleTick();
@@ -320,6 +373,7 @@ function eatApple(apple) {
         game.wrong++;
         game.snake.pop();
         burst(apple, '#d93b30');
+        setMood('wrong', 900);
         showMessage('Wrong apple', `Find ${nextLetter()} next.`);
         window.setTimeout(hideMessage, 700);
         makeApples();
@@ -327,6 +381,7 @@ function eatApple(apple) {
     }
 
     game.score++;
+    setMood('eat', 650);
     game.bodyLetters.unshift(apple.letter);
     if (game.bodyLetters.length > game.snake.length - 1) {
         game.bodyLetters.length = game.snake.length - 1;
@@ -351,14 +406,17 @@ function completeTarget() {
     }
 
     makeApples();
-    showMessage('Word complete', `Next word: ${currentTarget()}`);
-    window.setTimeout(hideMessage, 800);
+    if (currentStage().questions.length) {
+        showMessage('Word complete', `Next word: ${currentTarget()}`);
+        window.setTimeout(hideMessage, 800);
+    }
 }
 
 function winStage() {
     game.running = false;
     game.won = true;
     clearTimeout(game.timer);
+    setMood('win', 2500);
     const stars = starCount();
     const key = `starsEarnedStage${game.stageIndex + 1}`;
     const oldStars = Number(localStorage.getItem(key)) || 0;
@@ -371,6 +429,7 @@ function winStage() {
 function gameOver(reason) {
     game.running = false;
     clearTimeout(game.timer);
+    setMood('dead', 2500);
     showMessage('Game over', reason);
     draw();
 }
@@ -383,6 +442,18 @@ function starCount() {
         return 2;
     }
     return 1;
+}
+
+function setMood(mood, duration = 800) {
+    game.mood = mood;
+    game.moodUntil = Date.now() + duration;
+}
+
+function activeMood() {
+    if (Date.now() > game.moodUntil && !['dead', 'win', 'ready'].includes(game.mood)) {
+        return 'happy';
+    }
+    return game.mood;
 }
 
 function burst(apple, color) {
@@ -450,11 +521,16 @@ function drawApples() {
         ctx.shadowColor = 'rgba(0,0,0,0.24)';
         ctx.shadowBlur = 8;
         ctx.shadowOffsetY = 3;
-        ctx.fillStyle = apple.correct ? '#d93b30' : '#8e3b46';
+        ctx.fillStyle = apple.correct ? '#d93b30' : '#c63a35';
         ctx.beginPath();
-        ctx.arc(cx, cy + 1, tile * 0.43 + pulse, 0, Math.PI * 2);
+        ctx.arc(cx - 3, cy + 1, tile * 0.34 + pulse, 0, Math.PI * 2);
+        ctx.arc(cx + 4, cy + 1, tile * 0.34 + pulse, 0, Math.PI * 2);
         ctx.fill();
         ctx.shadowBlur = 0;
+        ctx.fillStyle = 'rgba(255,255,255,0.45)';
+        ctx.beginPath();
+        ctx.ellipse(cx - 5, cy - 5, 4, 7, 0.7, 0, Math.PI * 2);
+        ctx.fill();
         ctx.fillStyle = '#2f6f31';
         ctx.fillRect(cx - 2, cy - tile * 0.58, 4, 8);
         ctx.beginPath();
@@ -469,53 +545,140 @@ function drawApples() {
     }
 }
 
+function directionAngle() {
+    return Math.atan2(game.direction.y || game.nextDirection.y, game.direction.x || game.nextDirection.x);
+}
+
 function drawSnake() {
-    for (let i = game.snake.length - 1; i >= 0; i--) {
-        const part = game.snake[i];
-        const cx = part.x * tile + tile / 2;
-        const cy = part.y * tile + tile / 2;
-        const isHead = i === 0;
+    const points = game.snake.map(part => ({
+        x: part.x * tile + tile / 2,
+        y: part.y * tile + tile / 2,
+    }));
 
+    if (points.length > 1) {
+        drawSnakePath(points, '#0e5b32', 30);
+        drawSnakePath(points, '#36a856', 23);
+    }
+
+    for (let i = game.snake.length - 1; i >= 1; i--) {
+        const point = points[i];
         ctx.save();
-        ctx.shadowColor = 'rgba(0,0,0,0.2)';
-        ctx.shadowBlur = isHead ? 10 : 5;
-        ctx.fillStyle = isHead ? '#125f37' : i % 2 === 0 ? '#34a853' : '#63bd65';
-        roundRect(cx - 14, cy - 14, 28, 28, isHead ? 12 : 10);
+        ctx.fillStyle = i % 2 === 0 ? 'rgba(255,255,255,0.24)' : 'rgba(12,78,42,0.3)';
+        ctx.beginPath();
+        ctx.ellipse(point.x - 4, point.y - 5, 5.5, 3.3, -0.55, 0, Math.PI * 2);
         ctx.fill();
-        ctx.shadowBlur = 0;
 
-        if (isHead) {
-            drawSnakeFace(cx, cy);
-        } else {
-            const letter = game.bodyLetters[i - 1] || '';
-            if (letter) {
-                ctx.fillStyle = '#102018';
-                ctx.font = '800 17px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(letter, cx, cy + 1);
-            }
+        const letter = game.bodyLetters[i - 1] || '';
+        if (letter) {
+            ctx.fillStyle = '#062c1a';
+            ctx.font = '900 17px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(letter, point.x, point.y + 1);
         }
         ctx.restore();
     }
+
+    const head = points[0];
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.3)';
+    ctx.shadowBlur = 10;
+    ctx.fillStyle = activeMood() === 'dead' ? '#586273' : '#14753f';
+    ctx.beginPath();
+    ctx.ellipse(head.x, head.y, 18, 15, directionAngle(), 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    drawSnakeFace(head.x, head.y);
+    ctx.restore();
+}
+
+function drawSnakePath(points, color, width) {
+    ctx.save();
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.beginPath();
+    ctx.moveTo(points[points.length - 1].x, points[points.length - 1].y);
+    for (let i = points.length - 2; i >= 0; i--) {
+        ctx.lineTo(points[i].x, points[i].y);
+    }
+    ctx.stroke();
+    ctx.restore();
 }
 
 function drawSnakeFace(cx, cy) {
-    ctx.fillStyle = '#ffffff';
+    const mood = activeMood();
+    const angle = directionAngle();
+    const forward = { x: Math.cos(angle), y: Math.sin(angle) };
+    const side = { x: -forward.y, y: forward.x };
+    const eyeA = {
+        x: cx + forward.x * 6 + side.x * 5,
+        y: cy + forward.y * 6 + side.y * 5,
+    };
+    const eyeB = {
+        x: cx + forward.x * 6 - side.x * 5,
+        y: cy + forward.y * 6 - side.y * 5,
+    };
+
+    ctx.fillStyle = '#fff';
     ctx.beginPath();
-    ctx.arc(cx - 5, cy - 4, 3.2, 0, Math.PI * 2);
-    ctx.arc(cx + 5, cy - 4, 3.2, 0, Math.PI * 2);
+    ctx.arc(eyeA.x, eyeA.y, 3.8, 0, Math.PI * 2);
+    ctx.arc(eyeB.x, eyeB.y, 3.8, 0, Math.PI * 2);
     ctx.fill();
+
     ctx.fillStyle = '#0f172a';
-    ctx.beginPath();
-    ctx.arc(cx - 5, cy - 4, 1.5, 0, Math.PI * 2);
-    ctx.arc(cx + 5, cy - 4, 1.5, 0, Math.PI * 2);
-    ctx.fill();
+    if (mood === 'dead') {
+        drawX(eyeA.x, eyeA.y);
+        drawX(eyeB.x, eyeB.y);
+    } else {
+        const pupilPush = mood === 'wrong' ? 1.5 : 0.6;
+        ctx.beginPath();
+        ctx.arc(eyeA.x + forward.x * pupilPush, eyeA.y + forward.y * pupilPush, 1.6, 0, Math.PI * 2);
+        ctx.arc(eyeB.x + forward.x * pupilPush, eyeB.y + forward.y * pupilPush, 1.6, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    const mouth = {
+        x: cx + forward.x * 8,
+        y: cy + forward.y * 8,
+    };
     ctx.strokeStyle = '#0f172a';
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.arc(cx, cy + 4, 6, 0.1, Math.PI - 0.1);
+    if (mood === 'wrong') {
+        ctx.arc(mouth.x, mouth.y, 5, Math.PI + 0.2, Math.PI * 2 - 0.2);
+    } else if (mood === 'dead') {
+        ctx.moveTo(mouth.x - side.x * 4, mouth.y - side.y * 4);
+        ctx.lineTo(mouth.x + side.x * 4, mouth.y + side.y * 4);
+    } else {
+        ctx.arc(mouth.x, mouth.y - 2, 6, 0.15, Math.PI - 0.15);
+    }
     ctx.stroke();
+
+    if (mood === 'eat' || mood === 'focus' || mood === 'happy' || mood === 'win') {
+        ctx.strokeStyle = mood === 'win' ? '#f8c436' : '#e31b5f';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(cx + forward.x * 15, cy + forward.y * 15);
+        ctx.lineTo(cx + forward.x * 23 + side.x * 3, cy + forward.y * 23 + side.y * 3);
+        ctx.moveTo(cx + forward.x * 23 + side.x * 3, cy + forward.y * 23 + side.y * 3);
+        ctx.lineTo(cx + forward.x * 19 - side.x * 3, cy + forward.y * 19 - side.y * 3);
+        ctx.stroke();
+    }
+}
+
+function drawX(x, y) {
+    ctx.save();
+    ctx.strokeStyle = '#0f172a';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(x - 3, y - 3);
+    ctx.lineTo(x + 3, y + 3);
+    ctx.moveTo(x + 3, y - 3);
+    ctx.lineTo(x - 3, y + 3);
+    ctx.stroke();
+    ctx.restore();
 }
 
 function drawParticles() {
@@ -722,9 +885,9 @@ for (const img of images.values()) {
     img.addEventListener('load', draw);
 }
 
-const savedSpeed = localStorage.getItem('snakeSpeedPerfect');
-if (savedSpeed) {
-    ui.speed.value = savedSpeed;
+const savedSpeed = Number(localStorage.getItem('snakeSpeedPerfect'));
+if (savedSpeed >= 170 && savedSpeed <= 520) {
+    ui.speed.value = String(Math.max(savedSpeed, 280));
 }
 
 buildStageButtons();
