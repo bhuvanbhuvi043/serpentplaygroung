@@ -10,6 +10,10 @@ const ui = {
     brief: document.getElementById('stageBrief'),
     questions: document.getElementById('questionList'),
     trail: document.getElementById('letterTrail'),
+    progressLabel: document.getElementById('progressLabel'),
+    progressPercent: document.getElementById('progressPercent'),
+    progressFill: document.getElementById('progressFill'),
+    currentWord: document.getElementById('currentWordValue'),
     overlay: document.getElementById('messageOverlay'),
     messageTitle: document.getElementById('messageTitle'),
     messageText: document.getElementById('messageText'),
@@ -26,137 +30,339 @@ const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const tile = 30;
 const cells = 20;
 
+const backgrounds = [
+    'assets/images/stage-3.jpg',
+    'assets/images/photo-1628260412297-a3377e45006f.jpg',
+    'assets/images/depositphotos_389158500-stock-photo-space-aircrafts-universe-fantasy-backdrop.jpg',
+    'assets/images/stage5img.jpg',
+    'assets/images/stage-2.jpg',
+    'assets/images/stage-4.jpg',
+    'assets/images/stage-1.avif',
+    'assets/images/pexels-frans-van-heerden-1022692.jpg',
+    'assets/images/pexels-tom-fisk-3765594.jpg',
+    'assets/images/pexels-sebastiaan-stam-1480690.jpg',
+];
+
+const wordClues = {
+    ARM: 'A body part between shoulder and hand is an ___.',
+    ANIMAL: 'A living creature like a dog or tiger is an ___.',
+    APPLE: 'A red or green fruit is an ___.',
+    BAG: 'You carry books or things in a ___.',
+    BALL: 'A round toy used in many games is a ___.',
+    BANANA: 'A long yellow fruit is a ___.',
+    BAT: 'A stick used to hit a ball is a ___.',
+    BASKET: 'You can carry fruit or toys in a ___.',
+    BEAR: 'A large furry wild animal is a ___.',
+    BEACH: 'Sand beside the sea is a ___.',
+    BED: 'You sleep on a ___.',
+    BELL: 'A ringing object is a ___.',
+    BERRY: 'A small juicy fruit can be a ___.',
+    BIRD: 'An animal with wings and feathers is a ___.',
+    BLACK: 'A very dark color is ___.',
+    BLOOM: 'When a flower opens, it begins to ___.',
+    BOAT: 'A vehicle that moves on water is a ___.',
+    BOOK: 'You read pages inside a ___.',
+    BOTTLE: 'A container for water or juice is a ___.',
+    BOX: 'A square container is a ___.',
+    BRAIN: 'The organ inside your head that thinks is the ___.',
+    BREAD: 'A loaf is made from ___.',
+    BRIDGE: 'A road over water can be a ___.',
+    BRIGHT: 'A sunny room is very ___.',
+    BROWN: 'The color of chocolate is often ___.',
+    BRUSH: 'You clean teeth or hair with a ___.',
+    BUNNY: 'A cute rabbit can be called a ___.',
+    BUS: 'A large vehicle that carries many people is a ___.',
+    BUTTER: 'A yellow spread used on bread is ___.',
+    BUTTON: 'A small round fastener on clothes is a ___.',
+    CAKE: 'A sweet food for birthdays is ___.',
+    CAMERA: 'We take photos with a ___.',
+    CANDLE: 'A wax stick with a flame is a ___.',
+    CANDY: 'A small sweet treat is ___.',
+    CAR: 'A road vehicle with four wheels is a ___.',
+    CARPET: 'A soft floor covering is a ___.',
+    CARROT: 'An orange vegetable loved in soup is a ___.',
+    CASTLE: 'A king may live in a ___.',
+    CAT: 'A small pet that says meow is a ___.',
+    CHAIR: 'You sit on a ___.',
+    CHEESE: 'A food made from milk is ___.',
+    CIRCLE: 'A round shape is a ___.',
+    CLOCK: 'A tool that shows time is a ___.',
+    CLOUD: 'A white shape in the sky is a ___.',
+    COAT: 'Warm clothing worn outside is a ___.',
+    COOKIE: 'A small sweet baked snack is a ___.',
+    CORN: 'A yellow grain that grows on a cob is ___.',
+    COTTON: 'A soft white material from a plant is ___.',
+    CROWN: 'A king or queen wears a ___.',
+    CUP: 'You drink from a ___.',
+    DANCE: 'Moving with music is to ___.',
+    DANGER: 'Something unsafe can mean ___.',
+    DESERT: 'A dry place with lots of sand is a ___.',
+    DESK: 'A table for study or work is a ___.',
+    DOCTOR: 'A person who helps sick people is a ___.',
+    DOG: 'A loyal pet that barks is a ___.',
+    DOOR: 'You open a ___ to enter a room.',
+    DRAGON: 'A story creature that may breathe fire is a ___.',
+    DREAM: 'A story in your sleep is a ___.',
+    DRESS: 'A one-piece clothing item is a ___.',
+    DRIVER: 'A person who controls a car is a ___.',
+    DRUM: 'A musical instrument you beat is a ___.',
+    DUCK: 'A bird that swims and quacks is a ___.',
+    EAR: 'You hear sound with your ___.',
+    EARTH: 'Our planet is called ___.',
+    EGG: 'A baby bird can hatch from an ___.',
+    ELEVEN: 'The number after ten is ___.',
+    EYE: 'You see with your ___.',
+    FAIRY: 'A tiny magic story person is a ___.',
+    FAMILY: 'Parents, children, and relatives are ___.',
+    FAN: 'A machine that moves air is a ___.',
+    FARM: 'A place where crops and animals grow is a ___.',
+    FARMER: 'A person who grows food on a farm is a ___.',
+    FATHER: 'A male parent is a ___.',
+    FIELD: 'An open area of grass or crops is a ___.',
+    FINGER: 'A part of your hand is a ___.',
+    FIRE: 'Hot flames are called ___.',
+    FISH: 'An animal that swims in water is a ___.',
+    FLAG: 'A cloth symbol for a country or team is a ___.',
+    FLOWER: 'A rose is a kind of ___.',
+    FOOT: 'You stand on your ___.',
+    FOREST: 'Many trees together make a ___.',
+    FOX: 'A clever wild animal with a bushy tail is a ___.',
+    FRAME: 'A border around a picture is a ___.',
+    FRIEND: 'Someone kind you like is a ___.',
+    FROG: 'A green animal that jumps and croaks is a ___.',
+    FRUIT: 'Apples, bananas, and mangoes are ___.',
+    GARDEN: 'Flowers grow in a ___.',
+    GIANT: 'A very large story person is a ___.',
+    GLASS: 'A clear material used in windows is ___.',
+    GLOVES: 'Clothing that covers the hands is ___.',
+    GOAT: 'A farm animal with horns can be a ___.',
+    GRASS: 'The green plant covering many lawns is ___.',
+    GREEN: 'The color of grass is ___.',
+    GUITAR: 'A string instrument played with hands is a ___.',
+    HAMMER: 'A tool used to hit nails is a ___.',
+    HAND: 'You hold things with your ___.',
+    HAPPY: 'A joyful feeling is ___.',
+    HAT: 'You wear a ___ on your head.',
+    HEART: 'The organ that pumps blood is the ___.',
+    HELMET: 'A hard hat for safety is a ___.',
+    HEN: 'A female chicken is a ___.',
+    HOME: 'The place where you live is your ___.',
+    HONEY: 'A sweet food made by bees is ___.',
+    HORSE: 'A large animal people can ride is a ___.',
+    HOUSE: 'A building where people live is a ___.',
+    HUNTER: 'A person who looks for wild animals is a ___.',
+    INSECT: 'A small animal with six legs is an ___.',
+    ISLAND: 'Land surrounded by water is an ___.',
+    JACKET: 'A short coat is a ___.',
+    JAM: 'A sweet fruit spread is ___.',
+    JUICE: 'A drink made from fruit is ___.',
+    JUNGLE: 'A thick wild forest is a ___.',
+    KETTLE: 'A pot used to boil water is a ___.',
+    KEY: 'You open a lock with a ___.',
+    KING: 'A male ruler is a ___.',
+    KITE: 'A toy that flies on a string is a ___.',
+    KITTEN: 'A baby cat is a ___.',
+    LADDER: 'You climb up using a ___.',
+    LAKE: 'A large body of water surrounded by land is a ___.',
+    LAMP: 'A lamp gives us ___.',
+    LEG: 'You walk with your ___.',
+    LEMON: 'A sour yellow fruit is a ___.',
+    LETTER: 'A, B, and C are each a ___.',
+    LIGHT: 'A lamp gives us ___.',
+    LION: 'A big cat called king of animals is a ___.',
+    LIP: 'A part of the mouth is a ___.',
+    MAGIC: 'A wonder trick can feel like ___.',
+    MAP: 'A drawing that shows places is a ___.',
+    MARKET: 'A place to buy food is a ___.',
+    MILK: 'A white drink from cows is ___.',
+    MIRROR: 'You see your face in a ___.',
+    MONEY: 'Coins and notes used to buy things are ___.',
+    MONKEY: 'An animal that climbs and likes bananas is a ___.',
+    MOON: 'At night, we can see the ___.',
+    MOTHER: 'A female parent is a ___.',
+    MOUSE: 'A small animal or computer pointer is a ___.',
+    MUSIC: 'Songs and rhythm are ___.',
+    NAPKIN: 'A cloth or paper used while eating is a ___.',
+    NATURE: 'Plants, animals, sky, and land are ___.',
+    NEEDLE: 'A sharp tool used for sewing is a ___.',
+    NET: 'A mesh used to catch fish or balls is a ___.',
+    NIGHT: 'The dark time after sunset is ___.',
+    NURSE: 'A person who helps care for patients is a ___.',
+    OCEAN: 'A very large sea is an ___.',
+    OFFICE: 'A place where people work at desks is an ___.',
+    ORANGE: 'A fruit and a color can both be ___.',
+    ORIGIN: 'The beginning of something is its ___.',
+    PAPER: 'You write or draw on ___.',
+    PARROT: 'A colorful talking bird can be a ___.',
+    PEACE: 'A calm time without fighting is ___.',
+    PEN: 'You write with a ___.',
+    PENCIL: 'A wooden tool used for writing is a ___.',
+    PHONE: 'You call people with a ___.',
+    PILLOW: 'A soft cushion for your head is a ___.',
+    PIRATE: 'A sea robber in stories is a ___.',
+    PIZZA: 'A round food with cheese on top is ___.',
+    PLANE: 'A flying vehicle is a ___.',
+    PLANET: 'Earth is a ___.',
+    PLANT: 'A living thing with leaves is a ___.',
+    POCKET: 'You keep small things in a ___.',
+    POETRY: 'Writing made of poems is ___.',
+    POT: 'A container used for cooking is a ___.',
+    POTATO: 'A brown vegetable used for fries is a ___.',
+    PUZZLE: 'A game with pieces to solve is a ___.',
+    QUEEN: 'A female ruler is a ___.',
+    RABBIT: 'A hopping animal with long ears is a ___.',
+    RADIO: 'A device for listening to programs is a ___.',
+    RAIN: 'Water falling from clouds is ___.',
+    RED: 'The color of many apples is ___.',
+    RIBBON: 'A long strip used for tying is a ___.',
+    RING: 'Jewelry worn on a finger is a ___.',
+    RIVER: 'A long flow of water is a ___.',
+    ROAD: 'Cars travel on a ___.',
+    ROCKET: 'A spacecraft that launches upward is a ___.',
+    ROSE: 'A red flower with thorns can be a ___.',
+    RULER: 'A tool used to measure lines is a ___.',
+    RUN: 'To move quickly on feet is to ___.',
+    SCHOOL: 'Children go to ___ to learn.',
+    SHEEP: 'A woolly farm animal is a ___.',
+    SHIP: 'A large boat is a ___.',
+    SHIRT: 'Clothing worn on the upper body is a ___.',
+    SHOE: 'You wear a ___ on your foot.',
+    SILVER: 'A shiny gray metal color is ___.',
+    SISTER: 'A girl with the same parents is a ___.',
+    SMILE: 'A happy face has a ___.',
+    SNAKE: 'A long animal with no legs is a ___.',
+    SNOW: 'White frozen flakes are ___.',
+    SOCK: 'You wear a ___ inside a shoe.',
+    SPOON: 'A tool used to eat soup is a ___.',
+    STAR: 'A bright point in the night sky is a ___.',
+    STONE: 'A small hard rock is a ___.',
+    STORY: 'A tale with events is a ___.',
+    SUGAR: 'A sweet ingredient is ___.',
+    SUMMER: 'The hot season is ___.',
+    SUN: 'The bright star in the daytime sky is the ___.',
+    TABLE: 'You eat or work at a ___.',
+    TIGER: 'A striped big cat is a ___.',
+    TOMATO: 'A red fruit often used in sauce is a ___.',
+    TOWN: 'A small city can be called a ___.',
+    TOY: 'A child plays with a ___.',
+    TRAIN: 'A vehicle that runs on tracks is a ___.',
+    TREE: 'A tall plant with branches is a ___.',
+    TURTLE: 'An animal with a shell is a ___.',
+    WALLET: 'You keep money and cards in a ___.',
+    WATER: 'We drink ___ when we are thirsty.',
+    WHEEL: 'A round part that helps vehicles move is a ___.',
+    WHITE: 'The color of milk is ___.',
+    WIND: 'Moving air is called ___.',
+    WINDOW: 'You look outside through a ___.',
+    WINTER: 'The cold season is ___.',
+    WIZARD: 'A magic story person can be a ___.',
+    WOLF: 'A wild animal like a dog is a ___.',
+    WONDER: 'A feeling of amazement is ___.',
+    WORLD: 'All the earth and its people are the ___.',
+    YELLOW: 'The color of a banana is ___.',
+    ZEBRA: 'A black and white striped animal is a ___.',
+};
+
+const lessonStagePlans = [
+    { name: 'Three Letter Finder', words: ['CAT', 'DOG', 'SUN'] },
+    { name: 'Easy Object Hunt', words: ['HAT', 'BUS', 'CUP'] },
+    { name: 'Tiny Word Map', words: ['PEN', 'BED', 'CAR', 'MAP'] },
+    { name: 'Animal And Food Sprint', words: ['BOX', 'FOX', 'HEN', 'EGG'] },
+    { name: 'Body Word Starter', words: ['KEY', 'LEG', 'ARM', 'EYE', 'EAR'] },
+    { name: 'Little Things Chase', words: ['JAM', 'POT', 'FAN', 'BAG', 'TOY'] },
+    { name: 'Fast Three Letter Mix', words: ['RED', 'RUN', 'BAT', 'NET', 'LIP'] },
+    { name: 'Four Letter Starter', words: ['TREE', 'FISH', 'BOOK'] },
+    { name: 'Four Letter Builder', words: ['RAIN', 'MOON', 'STAR', 'MILK', 'HOME'] },
+    { name: 'Animal Room Words', words: ['BIRD', 'LION', 'CAKE', 'BALL'] },
+    { name: 'Home And Body Trail', words: ['BOAT', 'DOOR', 'HAND', 'FOOT', 'LAMP'] },
+    { name: 'Nature Turn Test', words: ['ROAD', 'KING', 'RING', 'SNOW', 'WIND'] },
+    { name: 'Playful Four Letters', words: ['FIRE', 'DESK', 'BELL', 'KITE', 'DUCK'] },
+    { name: 'Farm And Forest Words', words: ['FROG', 'GOAT', 'BEAR', 'COAT', 'SHOE'] },
+    { name: 'Place Word Run', words: ['SOCK', 'ROSE', 'FARM', 'LAKE', 'TOWN'] },
+    { name: 'Four Letter Review', words: ['SHIP', 'FLAG', 'DRUM', 'WOLF', 'CORN'] },
+    { name: 'Five Letter Learner', words: ['APPLE', 'WATER', 'HOUSE', 'SMILE'] },
+    { name: 'Five Letter Challenge', words: ['PLANT', 'LIGHT', 'BREAD', 'MUSIC', 'GREEN'] },
+    { name: 'Moving World Words', words: ['TRAIN', 'RIVER', 'CLOUD', 'TABLE', 'CHAIR'] },
+    { name: 'Nature And Feeling Words', words: ['BEACH', 'GRASS', 'HEART', 'FRUIT', 'HONEY'] },
+    { name: 'Daily Word Builder', words: ['MONEY', 'NIGHT', 'CLOCK', 'PHONE', 'PAPER'] },
+    { name: 'Food And Animal Mix', words: ['PIZZA', 'QUEEN', 'SUGAR', 'TIGER', 'ZEBRA'] },
+    { name: 'Useful Five Letters', words: ['LEMON', 'HORSE', 'SHEEP', 'BRUSH', 'SPOON'] },
+    { name: 'Color And Clothes Set', words: ['SHIRT', 'DRESS', 'BLACK', 'WHITE', 'BROWN'] },
+    { name: 'Action And Earth Set', words: ['HAPPY', 'DANCE', 'DREAM', 'EARTH', 'GLASS'] },
+    { name: 'Six Word Five-Letter Trial', words: ['JUICE', 'MAGIC', 'OCEAN', 'PEACE', 'RADIO', 'STONE'] },
+    { name: 'Thinking Word Trial', words: ['STORY', 'WORLD', 'CROWN', 'BLOOM', 'BRAIN', 'FRAME'] },
+    { name: 'Travel Word Trial', words: ['FIELD', 'MOUSE', 'NURSE', 'PLANE', 'SNAKE', 'WHEEL'] },
+    { name: 'Sweet Review Chase', words: ['RULER', 'BERRY', 'CANDY', 'BUNNY', 'FAIRY', 'GIANT'] },
+    { name: 'Six Letter Explorer', words: ['ORANGE', 'SCHOOL', 'GARDEN', 'FRIEND'] },
+    { name: 'Six Letter Builder', words: ['BRIGHT', 'FAMILY', 'MARKET', 'WINDOW', 'FLOWER'] },
+    { name: 'World Sight Words', words: ['CAMERA', 'PLANET', 'FOREST', 'CASTLE', 'DESERT'] },
+    { name: 'Adventure Word Path', words: ['ISLAND', 'POCKET', 'ROCKET', 'PUZZLE', 'ANIMAL'] },
+    { name: 'Food Shape Mission', words: ['BANANA', 'BOTTLE', 'BUTTER', 'CHEESE', 'CIRCLE'] },
+    { name: 'Family Story Mission', words: ['DOCTOR', 'DRAGON', 'FATHER', 'MOTHER', 'GUITAR'] },
+    { name: 'Tool And Letter Mission', words: ['HAMMER', 'JACKET', 'KITTEN', 'LADDER', 'LETTER'] },
+    { name: 'Learning Place Mission', words: ['MONKEY', 'NATURE', 'OFFICE', 'PIRATE', 'PENCIL'] },
+    { name: 'Animal Season Mission', words: ['RABBIT', 'SILVER', 'SISTER', 'SUMMER', 'TURTLE'] },
+    { name: 'Color Season Mission', words: ['YELLOW', 'WINTER', 'WONDER', 'BASKET', 'BRIDGE'] },
+    { name: 'Six Word Safety Trial', words: ['CANDLE', 'CARROT', 'COOKIE', 'DANGER', 'ELEVEN', 'FINGER'] },
+    { name: 'Jungle Tool Trial', words: ['HELMET', 'INSECT', 'JUNGLE', 'KETTLE', 'NEEDLE', 'PILLOW'] },
+    { name: 'Kitchen Magic Trial', words: ['POTATO', 'TOMATO', 'WALLET', 'WIZARD', 'BUTTON', 'COTTON'] },
+    { name: 'People And Places Trial', words: ['CARPET', 'DRIVER', 'FARMER', 'GLOVES', 'HUNTER', 'MIRROR'] },
+    { name: 'Poetry Ribbon Trial', words: ['NAPKIN', 'ORIGIN', 'PARROT', 'POETRY', 'RIBBON', 'YELLOW'] },
+    { name: 'Mixed Word Sprint One', words: ['CAT', 'TREE', 'APPLE', 'ORANGE', 'DOG', 'FISH'] },
+    { name: 'Mixed Word Sprint Two', words: ['SUN', 'BOOK', 'WATER', 'SCHOOL', 'PEN', 'RAIN'] },
+    { name: 'Mixed Word Sprint Three', words: ['HAT', 'MOON', 'HOUSE', 'GARDEN', 'BUS', 'STAR'] },
+    { name: 'Mixed Word Sprint Four', words: ['CAR', 'MILK', 'SMILE', 'FRIEND', 'KEY', 'HOME'] },
+    { name: 'Word Serpent Master', words: ['MAP', 'BIRD', 'LIGHT', 'FLOWER', 'TOY', 'ROCKET'] },
+];
+
+function makeQuestion(answer) {
+    const clue = wordClues[answer] || `Find the word ___.`;
+    const [before, after = ''] = clue.split('___');
+    return { before, after, answer };
+}
+
+function lengthLabel(words) {
+    const sizes = Array.from(new Set(words.map(word => word.length))).sort((a, b) => a - b);
+    if (sizes.length === 1) {
+        return `${sizes[0]}-letter`;
+    }
+    return `${sizes.join('/')} letter`;
+}
+
+function makeBrief(words, index) {
+    const count = words.length;
+    const label = lengthLabel(words);
+    if (index < 7) {
+        return `Find ${count} short ${label} words. Eat each word letter-by-letter while steering safely.`;
+    }
+    if (index < 28) {
+        return `Find ${count} ${label} words. Read the clue, collect the letters, and keep the snake alive.`;
+    }
+    if (index < 44) {
+        return `Find ${count} ${label} words. Longer words mean a longer snake and sharper turns.`;
+    }
+    return `Find ${count} mixed words. This review stage tests English memory and snake control together.`;
+}
+
 const stages = [
     {
         title: 'Stage 1',
         name: 'Hungry Snake',
+        kind: 'alphabet',
         brief: 'Eat the alphabet from A to Z. The letters you eat travel along the snake body.',
-        background: 'assets/images/stage-3.jpg',
+        background: backgrounds[0],
         targets: alphabet,
         questions: [],
     },
-    {
-        title: 'Stage 2',
-        name: 'Three Letter Finder',
-        brief: 'Find 3 short English words. Eat each word letter-by-letter while steering safely.',
-        background: 'assets/images/photo-1628260412297-a3377e45006f.jpg',
-        targets: ['CAT', 'DOG', 'SUN'],
-        questions: [
-            { before: 'A small pet that says meow is a ', after: '.', answer: 'CAT' },
-            { before: 'A loyal pet that barks is a ', after: '.', answer: 'DOG' },
-            { before: 'The bright star in the daytime sky is the ', after: '.', answer: 'SUN' },
-        ],
-    },
-    {
-        title: 'Stage 3',
-        name: 'Four Letter Starter',
-        brief: 'Find 3 four-letter words. Read the clue, then collect the correct letters.',
-        background: 'assets/images/depositphotos_389158500-stock-photo-space-aircrafts-universe-fantasy-backdrop.jpg',
-        targets: ['TREE', 'FISH', 'BOOK'],
-        questions: [
-            { before: 'A tall plant with branches is a ', after: '.', answer: 'TREE' },
-            { before: 'An animal that swims in water is a ', after: '.', answer: 'FISH' },
-            { before: 'You read pages inside a ', after: '.', answer: 'BOOK' },
-        ],
-    },
-    {
-        title: 'Stage 4',
-        name: 'Four Letter Builder',
-        brief: 'Find 5 four-letter words. More words means more snake body to manage.',
-        background: 'assets/images/stage5img.jpg',
-        targets: ['RAIN', 'MOON', 'STAR', 'MILK', 'HOME'],
-        questions: [
-            { before: 'Water falling from clouds is ', after: '.', answer: 'RAIN' },
-            { before: 'At night, we can see the ', after: '.', answer: 'MOON' },
-            { before: 'A bright point in the night sky is a ', after: '.', answer: 'STAR' },
-            { before: 'A white drink from cows is ', after: '.', answer: 'MILK' },
-            { before: 'The place where you live is your ', after: '.', answer: 'HOME' },
-        ],
-    },
-    {
-        title: 'Stage 5',
-        name: 'Five Letter Learner',
-        brief: 'Find 4 five-letter words. Think first, then steer with control.',
-        background: 'assets/images/depositphotos_389158500-stock-photo-space-aircrafts-universe-fantasy-backdrop.jpg',
-        targets: ['APPLE', 'WATER', 'HOUSE', 'SMILE'],
-        questions: [
-            { before: 'A red or green fruit is an ', after: '.', answer: 'APPLE' },
-            { before: 'We drink ', after: ' when we are thirsty.', answer: 'WATER' },
-            { before: 'A building where people live is a ', after: '.', answer: 'HOUSE' },
-            { before: 'A happy face has a ', after: '.', answer: 'SMILE' },
-        ],
-    },
-    {
-        title: 'Stage 6',
-        name: 'Five Letter Challenge',
-        brief: 'Find 5 five-letter words. The snake grows longer, so plan your turns.',
-        background: 'assets/images/depositphotos_389158500-stock-photo-space-aircrafts-universe-fantasy-backdrop.jpg',
-        targets: ['PLANT', 'LIGHT', 'BREAD', 'MUSIC', 'GREEN'],
-        questions: [
-            { before: 'A living thing with leaves is a ', after: '.', answer: 'PLANT' },
-            { before: 'A lamp gives us ', after: '.', answer: 'LIGHT' },
-            { before: 'A loaf is made from ', after: '.', answer: 'BREAD' },
-            { before: 'Songs and rhythm are ', after: '.', answer: 'MUSIC' },
-            { before: 'The color of grass is ', after: '.', answer: 'GREEN' },
-        ],
-    },
-    {
-        title: 'Stage 7',
-        name: 'Six Letter Explorer',
-        brief: 'Find 4 six-letter words. Longer words make the learning challenge stronger.',
-        background: 'assets/images/stage-2.jpg',
-        targets: ['ORANGE', 'SCHOOL', 'GARDEN', 'FRIEND'],
-        questions: [
-            { before: 'A fruit and a color can both be ', after: '.', answer: 'ORANGE' },
-            { before: 'Children go to ', after: ' to learn.', answer: 'SCHOOL' },
-            { before: 'Flowers grow in a ', after: '.', answer: 'GARDEN' },
-            { before: 'Someone kind you like is a ', after: '.', answer: 'FRIEND' },
-        ],
-    },
-    {
-        title: 'Stage 8',
-        name: 'Six Letter Builder',
-        brief: 'Find 5 six-letter words. Use both English memory and snake control.',
-        background: 'assets/images/stage-4.jpg',
-        targets: ['BRIGHT', 'FAMILY', 'MARKET', 'WINDOW', 'FLOWER'],
-        questions: [
-            { before: 'A sunny room is very ', after: '.', answer: 'BRIGHT' },
-            { before: 'Parents, children, and relatives are ', after: '.', answer: 'FAMILY' },
-            { before: 'A place to buy food is a ', after: '.', answer: 'MARKET' },
-            { before: 'You look outside through a ', after: '.', answer: 'WINDOW' },
-            { before: 'A rose is a kind of ', after: '.', answer: 'FLOWER' },
-        ],
-    },
-    {
-        title: 'Stage 9',
-        name: 'Mixed Word Chase',
-        brief: 'Find 6 mixed five and six-letter words. Decoy apples are more distracting now.',
-        background: 'assets/images/stage-1.avif',
-        targets: ['CAMERA', 'PLANET', 'RIVER', 'TRAIN', 'CLOUD', 'FOREST'],
-        questions: [
-            { before: 'We take photos with a ', after: '.', answer: 'CAMERA' },
-            { before: 'Earth is a ', after: '.', answer: 'PLANET' },
-            { before: 'A long flow of water is a ', after: '.', answer: 'RIVER' },
-            { before: 'A vehicle that runs on tracks is a ', after: '.', answer: 'TRAIN' },
-            { before: 'A white shape in the sky is a ', after: '.', answer: 'CLOUD' },
-            { before: 'Many trees together make a ', after: '.', answer: 'FOREST' },
-        ],
-    },
-    {
-        title: 'Stage 10',
-        name: 'Word Serpent Master',
-        brief: 'Find 6 six-letter words. This is the first master stage.',
-        background: 'assets/images/pexels-frans-van-heerden-1022692.jpg',
-        targets: ['CASTLE', 'DESERT', 'ISLAND', 'POCKET', 'ROCKET', 'PUZZLE'],
-        questions: [
-            { before: 'A king may live in a ', after: '.', answer: 'CASTLE' },
-            { before: 'A dry place with lots of sand is a ', after: '.', answer: 'DESERT' },
-            { before: 'Land surrounded by water is an ', after: '.', answer: 'ISLAND' },
-            { before: 'You keep small things in a ', after: '.', answer: 'POCKET' },
-            { before: 'A spacecraft that launches upward is a ', after: '.', answer: 'ROCKET' },
-            { before: 'A game with pieces to solve is a ', after: '.', answer: 'PUZZLE' },
-        ],
-    },
+    ...lessonStagePlans.map((plan, index) => ({
+        title: `Stage ${index + 2}`,
+        name: plan.name,
+        kind: 'words',
+        brief: makeBrief(plan.words, index),
+        background: backgrounds[(index + 1) % backgrounds.length],
+        targets: plan.words,
+        questions: plan.words.map(makeQuestion),
+    })),
 ];
 
 const images = new Map();
@@ -181,6 +387,7 @@ const game = {
     bodyLetters: [],
     apples: [],
     particles: [],
+    touchCue: null,
     lastTick: 0,
     timer: null,
     muted: true,
@@ -218,6 +425,7 @@ function resetGame(keepMessage = true) {
     ];
     game.bodyLetters = [];
     game.particles = [];
+    game.touchCue = null;
     game.mood = 'ready';
     game.moodUntil = 0;
     makeApples();
@@ -475,6 +683,7 @@ function draw() {
     drawApples();
     drawSnake();
     drawParticles();
+    drawTouchCue();
 }
 
 function animationLoop() {
@@ -516,37 +725,62 @@ function drawApples() {
     for (const apple of game.apples) {
         const cx = apple.x * tile + tile / 2;
         const cy = apple.y * tile + tile / 2;
-        const pulse = Math.sin(Date.now() / 180 + apple.pulse) * 1.8;
+        const pulse = Math.sin(Date.now() / 180 + apple.pulse) * 1.6;
+        const appleGradient = ctx.createRadialGradient(cx - 7, cy - 8, 3, cx, cy, tile * 0.48 + pulse);
+        appleGradient.addColorStop(0, '#ffb3a7');
+        appleGradient.addColorStop(0.3, '#ef4f42');
+        appleGradient.addColorStop(1, '#a92222');
         ctx.save();
-        ctx.shadowColor = 'rgba(0,0,0,0.24)';
-        ctx.shadowBlur = 8;
+        ctx.shadowColor = apple.correct ? 'rgba(255, 226, 89, 0.36)' : 'rgba(0,0,0,0.25)';
+        ctx.shadowBlur = apple.correct ? 13 : 8;
         ctx.shadowOffsetY = 3;
-        ctx.fillStyle = apple.correct ? '#d93b30' : '#c63a35';
+        ctx.fillStyle = appleGradient;
         ctx.beginPath();
-        ctx.arc(cx - 3, cy + 1, tile * 0.34 + pulse, 0, Math.PI * 2);
-        ctx.arc(cx + 4, cy + 1, tile * 0.34 + pulse, 0, Math.PI * 2);
+        ctx.arc(cx - 5, cy + 2, tile * 0.33 + pulse, 0, Math.PI * 2);
+        ctx.arc(cx + 5, cy + 2, tile * 0.33 + pulse, 0, Math.PI * 2);
+        ctx.arc(cx, cy + 6, tile * 0.34 + pulse, 0, Math.PI * 2);
         ctx.fill();
+        ctx.strokeStyle = 'rgba(89, 12, 12, 0.42)';
+        ctx.lineWidth = 1.4;
+        ctx.stroke();
+
         ctx.shadowBlur = 0;
-        ctx.fillStyle = 'rgba(255,255,255,0.45)';
+        ctx.fillStyle = 'rgba(255,255,255,0.52)';
         ctx.beginPath();
-        ctx.ellipse(cx - 5, cy - 5, 4, 7, 0.7, 0, Math.PI * 2);
+        ctx.ellipse(cx - 7, cy - 6, 4.4, 8, 0.7, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillStyle = '#2f6f31';
-        ctx.fillRect(cx - 2, cy - tile * 0.58, 4, 8);
+
+        ctx.strokeStyle = '#65401d';
+        ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.ellipse(cx + 6, cy - tile * 0.58, 7, 4, -0.45, 0, Math.PI * 2);
+        ctx.moveTo(cx - 1, cy - 12);
+        ctx.quadraticCurveTo(cx + 1, cy - 18, cx + 5, cy - 22);
+        ctx.stroke();
+
+        const leafGradient = ctx.createLinearGradient(cx + 4, cy - 20, cx + 15, cy - 13);
+        leafGradient.addColorStop(0, '#76c95b');
+        leafGradient.addColorStop(1, '#22733a');
+        ctx.fillStyle = leafGradient;
+        ctx.beginPath();
+        ctx.ellipse(cx + 9, cy - 17, 8, 4.5, -0.45, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillStyle = '#fff8dc';
-        ctx.font = '700 18px Arial';
+
+        ctx.fillStyle = 'rgba(255, 248, 220, 0.93)';
+        ctx.beginPath();
+        ctx.arc(cx, cy + 3, 10.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#832020';
+        ctx.font = '900 17px Arial';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(apple.letter, cx, cy + 2);
+        ctx.fillText(apple.letter, cx, cy + 4);
         ctx.restore();
     }
 }
 
 function directionAngle() {
-    return Math.atan2(game.direction.y || game.nextDirection.y, game.direction.x || game.nextDirection.x);
+    const dir = game.nextDirection || game.direction;
+    return Math.atan2(dir.y, dir.x);
 }
 
 function drawSnake() {
@@ -556,40 +790,96 @@ function drawSnake() {
     }));
 
     if (points.length > 1) {
-        drawSnakePath(points, '#0e5b32', 30);
-        drawSnakePath(points, '#36a856', 23);
+        drawSnakePath(points, 'rgba(5, 36, 24, 0.42)', 34);
+        drawSnakePath(points, activeMood() === 'dead' ? '#3f4957' : '#0b5734', 30);
+        drawSnakePath(points, activeMood() === 'dead' ? '#657083' : '#38b466', 22);
+        drawSnakePath(points, activeMood() === 'dead' ? 'rgba(217,225,236,0.36)' : 'rgba(194, 255, 190, 0.34)', 8);
     }
 
     for (let i = game.snake.length - 1; i >= 1; i--) {
         const point = points[i];
-        ctx.save();
-        ctx.fillStyle = i % 2 === 0 ? 'rgba(255,255,255,0.24)' : 'rgba(12,78,42,0.3)';
-        ctx.beginPath();
-        ctx.ellipse(point.x - 4, point.y - 5, 5.5, 3.3, -0.55, 0, Math.PI * 2);
-        ctx.fill();
-
+        const angle = segmentAngle(points, i);
         const letter = game.bodyLetters[i - 1] || '';
+        ctx.save();
+        ctx.translate(point.x, point.y);
+        ctx.rotate(angle);
+        ctx.fillStyle = i % 2 === 0 ? 'rgba(245,255,216,0.34)' : 'rgba(12,78,42,0.26)';
+        ctx.beginPath();
+        ctx.ellipse(-4, -6, 6.2, 3.5, -0.55, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = 'rgba(5, 78, 46, 0.22)';
+        ctx.beginPath();
+        ctx.ellipse(6, 5, 4.8, 2.5, -0.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
         if (letter) {
+            ctx.save();
+            ctx.fillStyle = 'rgba(255,255,255,0.78)';
+            ctx.beginPath();
+            ctx.arc(point.x, point.y + 1, 10, 0, Math.PI * 2);
+            ctx.fill();
             ctx.fillStyle = '#062c1a';
             ctx.font = '900 17px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText(letter, point.x, point.y + 1);
+            ctx.restore();
         }
+    }
+
+    if (points.length > 2) {
+        const tail = points[points.length - 1];
+        const beforeTail = points[points.length - 2];
+        const tailAngle = Math.atan2(tail.y - beforeTail.y, tail.x - beforeTail.x);
+        ctx.save();
+        ctx.translate(tail.x, tail.y);
+        ctx.rotate(tailAngle);
+        ctx.fillStyle = activeMood() === 'dead' ? '#657083' : '#21884e';
+        ctx.beginPath();
+        ctx.moveTo(-18, 0);
+        ctx.quadraticCurveTo(-2, -10, 12, -3);
+        ctx.quadraticCurveTo(3, 0, 12, 3);
+        ctx.quadraticCurveTo(-2, 10, -18, 0);
+        ctx.fill();
         ctx.restore();
     }
 
     const head = points[0];
     ctx.save();
     ctx.shadowColor = 'rgba(0,0,0,0.3)';
-    ctx.shadowBlur = 10;
-    ctx.fillStyle = activeMood() === 'dead' ? '#586273' : '#14753f';
+    ctx.shadowBlur = 12;
+    const headGradient = ctx.createRadialGradient(head.x - 8, head.y - 10, 4, head.x, head.y, 22);
+    if (activeMood() === 'dead') {
+        headGradient.addColorStop(0, '#8892a3');
+        headGradient.addColorStop(1, '#475162');
+    } else {
+        headGradient.addColorStop(0, '#5fe17a');
+        headGradient.addColorStop(0.55, '#178146');
+        headGradient.addColorStop(1, '#0b4d30');
+    }
+    ctx.fillStyle = headGradient;
     ctx.beginPath();
-    ctx.ellipse(head.x, head.y, 18, 15, directionAngle(), 0, Math.PI * 2);
+    ctx.ellipse(head.x, head.y, 21, 16, directionAngle(), 0, Math.PI * 2);
     ctx.fill();
+    ctx.strokeStyle = 'rgba(5, 36, 24, 0.34)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(220, 255, 205, 0.34)';
+    ctx.beginPath();
+    ctx.ellipse(head.x - 5, head.y - 7, 7, 4, directionAngle() - 0.35, 0, Math.PI * 2);
+    ctx.fill();
+
     ctx.shadowBlur = 0;
     drawSnakeFace(head.x, head.y);
     ctx.restore();
+}
+
+function segmentAngle(points, index) {
+    const prev = points[Math.max(0, index - 1)];
+    const next = points[Math.min(points.length - 1, index + 1)];
+    return Math.atan2(prev.y - next.y, prev.x - next.x);
 }
 
 function drawSnakePath(points, color, width) {
@@ -639,6 +929,17 @@ function drawSnakeFace(cx, cy) {
         ctx.fill();
     }
 
+    if (mood === 'wrong' || mood === 'focus') {
+        ctx.strokeStyle = mood === 'wrong' ? '#4f1010' : '#0f3f2a';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(eyeA.x - side.x * 2 - forward.x * 3, eyeA.y - side.y * 2 - forward.y * 3);
+        ctx.lineTo(eyeA.x + side.x * 3 - forward.x * 5, eyeA.y + side.y * 3 - forward.y * 5);
+        ctx.moveTo(eyeB.x + side.x * 2 - forward.x * 3, eyeB.y + side.y * 2 - forward.y * 3);
+        ctx.lineTo(eyeB.x - side.x * 3 - forward.x * 5, eyeB.y - side.y * 3 - forward.y * 5);
+        ctx.stroke();
+    }
+
     const mouth = {
         x: cx + forward.x * 8,
         y: cy + forward.y * 8,
@@ -665,6 +966,14 @@ function drawSnakeFace(cx, cy) {
         ctx.moveTo(cx + forward.x * 23 + side.x * 3, cy + forward.y * 23 + side.y * 3);
         ctx.lineTo(cx + forward.x * 19 - side.x * 3, cy + forward.y * 19 - side.y * 3);
         ctx.stroke();
+    }
+
+    if (mood === 'win') {
+        ctx.fillStyle = '#ffe56a';
+        ctx.beginPath();
+        ctx.arc(cx - side.x * 13 - forward.x * 5, cy - side.y * 13 - forward.y * 5, 2.4, 0, Math.PI * 2);
+        ctx.arc(cx + side.x * 13 - forward.x * 5, cy + side.y * 13 - forward.y * 5, 2.4, 0, Math.PI * 2);
+        ctx.fill();
     }
 }
 
@@ -697,6 +1006,42 @@ function drawParticles() {
     }
 }
 
+function drawTouchCue() {
+    if (!game.touchCue || game.touchCue.life <= 0) {
+        return;
+    }
+    const cue = game.touchCue;
+    cue.life--;
+    const alpha = cue.life / 18;
+    const arrows = {
+        up: { x1: 0, y1: 12, x2: 0, y2: -14, ax1: -9, ay1: -4, ax2: 9, ay2: -4 },
+        down: { x1: 0, y1: -12, x2: 0, y2: 14, ax1: -9, ay1: 4, ax2: 9, ay2: 4 },
+        left: { x1: 12, y1: 0, x2: -14, y2: 0, ax1: -4, ay1: -9, ax2: -4, ay2: 9 },
+        right: { x1: -12, y1: 0, x2: 14, y2: 0, ax1: 4, ay1: -9, ax2: 4, ay2: 9 },
+    };
+    const arrow = arrows[cue.direction];
+    if (!arrow) {
+        return;
+    }
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = '#ffffff';
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.45)';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.arc(cue.x, cue.y, 24 - alpha * 8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cue.x + arrow.x1, cue.y + arrow.y1);
+    ctx.lineTo(cue.x + arrow.x2, cue.y + arrow.y2);
+    ctx.lineTo(cue.x + arrow.ax1, cue.y + arrow.ay1);
+    ctx.moveTo(cue.x + arrow.x2, cue.y + arrow.y2);
+    ctx.lineTo(cue.x + arrow.ax2, cue.y + arrow.ay2);
+    ctx.stroke();
+    ctx.restore();
+}
+
 function roundRect(x, y, width, height, radius) {
     ctx.beginPath();
     ctx.moveTo(x + radius, y);
@@ -722,9 +1067,28 @@ function updateUi() {
     ui.start.disabled = game.running && !game.paused && !game.won;
     ui.start.textContent = game.running && game.paused ? 'Resume' : 'Start';
     ui.pause.disabled = !game.running || game.won;
+    updateProgress();
     updateQuestions();
     updateLetters();
     updateStageButtons();
+}
+
+function updateProgress() {
+    const stage = currentStage();
+    const total = stage.targets.length;
+    const completed = Math.min(game.targetIndex, total);
+    const percent = total ? Math.round((completed / total) * 100) : 100;
+    const label = stage.kind === 'alphabet' ? 'Letters' : 'Words';
+    const current = stage.kind === 'alphabet'
+        ? (nextLetter() || 'Done')
+        : game.won
+            ? 'Done'
+            : currentTarget().slice(0, game.letterIndex).padEnd(currentTarget().length, '_');
+
+    ui.progressLabel.textContent = `${label} ${completed}/${total}`;
+    ui.progressPercent.textContent = `${percent}%`;
+    ui.progressFill.style.width = `${percent}%`;
+    ui.currentWord.textContent = current;
 }
 
 function updateQuestions() {
@@ -788,12 +1152,52 @@ function setDirection(name) {
     };
     const next = directions[name];
     if (!next) {
-        return;
+        return false;
     }
     if (next.x + game.direction.x === 0 && next.y + game.direction.y === 0) {
-        return;
+        return false;
     }
     game.nextDirection = next;
+    return true;
+}
+
+function directionFromTouch(clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    const head = game.snake[0];
+    const headX = rect.left + ((head.x + 0.5) / cells) * rect.width;
+    const headY = rect.top + ((head.y + 0.5) / cells) * rect.height;
+    const dx = clientX - headX;
+    const dy = clientY - headY;
+    if (Math.abs(dx) > Math.abs(dy)) {
+        return dx > 0 ? 'right' : 'left';
+    }
+    return dy > 0 ? 'down' : 'up';
+}
+
+function updateTouchCue(clientX, clientY, direction) {
+    const rect = canvas.getBoundingClientRect();
+    const x = Math.max(0, Math.min(canvas.width, ((clientX - rect.left) / rect.width) * canvas.width));
+    const y = Math.max(0, Math.min(canvas.height, ((clientY - rect.top) / rect.height) * canvas.height));
+    game.touchCue = { x, y, direction, life: 18 };
+}
+
+function handleTapSteering(event) {
+    const target = event.target;
+    if (target.closest('button, input, label, a, select, textarea, .side-panel')) {
+        return;
+    }
+    if (!target.closest('.play-panel') && !target.closest('.canvas-wrap')) {
+        return;
+    }
+    const isTouchLike = event.pointerType === 'touch' || event.pointerType === 'pen';
+    if (!isTouchLike && !target.closest('.canvas-wrap')) {
+        return;
+    }
+    event.preventDefault();
+    const direction = directionFromTouch(event.clientX, event.clientY);
+    if (setDirection(direction)) {
+        updateTouchCue(event.clientX, event.clientY, direction);
+    }
 }
 
 function buildStageButtons() {
@@ -858,6 +1262,8 @@ document.querySelectorAll('[data-dir]').forEach(button => {
     button.addEventListener('click', () => setDirection(button.dataset.dir));
 });
 
+document.addEventListener('pointerdown', handleTapSteering, { passive: false });
+
 window.addEventListener('keydown', event => {
     const map = {
         ArrowUp: 'up',
@@ -886,8 +1292,8 @@ for (const img of images.values()) {
 }
 
 const savedSpeed = Number(localStorage.getItem('snakeSpeedPerfect'));
-if (savedSpeed >= 170 && savedSpeed <= 520) {
-    ui.speed.value = String(Math.max(savedSpeed, 280));
+if (savedSpeed >= 220 && savedSpeed <= 620) {
+    ui.speed.value = String(Math.max(savedSpeed, 360));
 }
 
 buildStageButtons();

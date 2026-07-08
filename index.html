@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Word Serpent</title>
-    <link rel="stylesheet" href="src/styles/perfect-game.css?v=4">
-    <script src="src/js/perfect-game.js?v=5" defer></script>
+    <link rel="stylesheet" href="src/styles/perfect-game.css?v=6">
+    <script src="src/js/perfect-game.js?v=7" defer></script>
 </head>
 <body>
     <main class="app-shell">
@@ -15,7 +15,7 @@
                     <div class="mark" aria-hidden="true">S</div>
                     <div>
                         <h1>Word Serpent</h1>
-                        <p id="stageKicker">Sentence Solver</p>
+                        <p id="stageKicker">50 Stage Word Challenge</p>
                     </div>
                 </div>
 
@@ -49,6 +49,20 @@
             </aside>
 
             <section class="play-panel">
+                <div class="progress-panel" aria-label="Stage progress">
+                    <div class="progress-summary">
+                        <span id="progressLabel">Words 0/0</span>
+                        <strong id="progressPercent">0%</strong>
+                    </div>
+                    <div class="progress-track" aria-hidden="true">
+                        <span id="progressFill"></span>
+                    </div>
+                    <div class="current-word-row">
+                        <span>Current</span>
+                        <strong id="currentWordValue">A</strong>
+                    </div>
+                </div>
+
                 <div class="canvas-wrap">
                     <canvas id="gameCanvas" width="600" height="600"></canvas>
                     <div id="messageOverlay" class="message-overlay is-visible">
@@ -65,7 +79,7 @@
                     <button id="soundButton" type="button" aria-pressed="false">Sound</button>
                     <label class="speed-control">
                         <span>Pace</span>
-                        <input id="speedRange" type="range" min="170" max="520" step="10" value="320">
+                        <input id="speedRange" type="range" min="220" max="620" step="10" value="360">
                     </label>
                 </div>
 
