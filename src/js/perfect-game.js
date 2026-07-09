@@ -2,7 +2,18 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 const ui = {
+    homeScreen: document.getElementById('homeScreen'),
+    gameSurface: document.getElementById('gameSurface'),
+    stageCards: document.getElementById('stageCards'),
     stageList: document.getElementById('stageList'),
+    continue: document.getElementById('continueButton'),
+    home: document.getElementById('homeButton'),
+    drawer: document.getElementById('sidePanel'),
+    drawerButton: document.getElementById('drawerButton'),
+    drawerScrim: document.getElementById('drawerScrim'),
+    closeDrawer: document.getElementById('closeDrawerButton'),
+    gameStageLabel: document.getElementById('gameStageLabel'),
+    gameStageName: document.getElementById('gameStageName'),
     score: document.getElementById('scoreValue'),
     stars: document.getElementById('starValue'),
     target: document.getElementById('targetValue'),
@@ -14,6 +25,7 @@ const ui = {
     progressPercent: document.getElementById('progressPercent'),
     progressFill: document.getElementById('progressFill'),
     currentWord: document.getElementById('currentWordValue'),
+    letterBank: document.getElementById('letterBank'),
     overlay: document.getElementById('messageOverlay'),
     messageTitle: document.getElementById('messageTitle'),
     messageText: document.getElementById('messageText'),
@@ -261,58 +273,109 @@ const wordClues = {
     WORLD: 'All the earth and its people are the ___.',
     YELLOW: 'The color of a banana is ___.',
     ZEBRA: 'A black and white striped animal is a ___.',
+    END: 'The finish of something is the ___.',
+    TEN: 'The number after nine is ___.',
+    RAT: 'A small animal like a mouse is a ___.',
+    ART: 'Drawing and painting are ___.',
+    EAT: 'To take food into your mouth is to ___.',
+    TEA: 'A warm drink made with leaves is ___.',
+    HEAT: 'Warm temperature is ___.',
+    TAR: 'A black sticky road material is ___.',
+    ROD: 'A long thin stick is a ___.',
+    OAR: 'A paddle used to row a boat is an ___.',
+    PIN: 'A small sharp fastener is a ___.',
+    INK: 'Colored liquid used for writing is ___.',
+    KIN: 'Family or relatives are ___.',
+    PAL: 'A friend can be called a ___.',
+    OLD: 'Not new is ___.',
+    COD: 'A kind of fish is ___.',
+    COLD: 'Low temperature feels ___.',
+    SAND: 'Tiny grains found on a beach are ___.',
+    LAND: 'Ground, not water, is ___.',
+    LANE: 'A narrow road path is a ___.',
+    SEED: 'A plant can grow from a ___.',
+    NEED: 'Something necessary is a ___.',
+    DEER: 'A gentle animal with antlers is a ___.',
+    READ: 'To look at words and understand them is to ___.',
+    DEAR: 'Someone loved can be called ___.',
+    DARE: 'A challenge can be a ___.',
+    RACE: 'A speed contest is a ___.',
+    CARE: 'Kind attention is ___.',
+    ACRE: 'A unit for measuring land is an ___.',
+    FACE: 'Eyes, nose, and mouth are on the ___.',
+    NOTE: 'A short written message is a ___.',
+    TONE: 'The sound quality of a voice is its ___.',
+    BONE: 'A hard part inside the body is a ___.',
+    ROBE: 'A loose piece of clothing is a ___.',
+    SING: 'To make music with your voice is to ___.',
+    SIGN: 'A symbol or board with meaning is a ___.',
+    RISE: 'To move upward is to ___.',
+    SIREN: 'A loud warning sound is a ___.',
+    STAIR: 'One step in a staircase is a ___.',
+    TAIL: 'The back part of some animals is a ___.',
+    MAIL: 'Letters and parcels are ___.',
+    MAIN: 'Most important means ___.',
+    NAIL: 'A hard tip on a finger is a ___.',
+    PALE: 'Light in color can be ___.',
+    PEAL: 'A loud ringing sound is a ___.',
+    DEAL: 'An agreement can be a ___.',
+    LEAP: 'A big jump is a ___.',
+    DUST: 'Fine dry powder is ___.',
+    STUD: 'A small metal fastener is a ___.',
+    RUST: 'Red-brown coating on old metal is ___.',
+    TRUST: 'Belief that someone is honest is ___.',
 };
 
 const lessonStagePlans = [
-    { name: 'Three Letter Finder', words: ['CAT', 'DOG', 'SUN'] },
-    { name: 'Easy Object Hunt', words: ['HAT', 'BUS', 'CUP'] },
-    { name: 'Tiny Word Map', words: ['PEN', 'BED', 'CAR', 'MAP'] },
-    { name: 'Animal And Food Sprint', words: ['BOX', 'FOX', 'HEN', 'EGG'] },
-    { name: 'Body Word Starter', words: ['KEY', 'LEG', 'ARM', 'EYE', 'EAR'] },
-    { name: 'Little Things Chase', words: ['JAM', 'POT', 'FAN', 'BAG', 'TOY'] },
-    { name: 'Fast Three Letter Mix', words: ['RED', 'RUN', 'BAT', 'NET', 'LIP'] },
-    { name: 'Four Letter Starter', words: ['TREE', 'FISH', 'BOOK'] },
-    { name: 'Four Letter Builder', words: ['RAIN', 'MOON', 'STAR', 'MILK', 'HOME'] },
-    { name: 'Animal Room Words', words: ['BIRD', 'LION', 'CAKE', 'BALL'] },
-    { name: 'Home And Body Trail', words: ['BOAT', 'DOOR', 'HAND', 'FOOT', 'LAMP'] },
-    { name: 'Nature Turn Test', words: ['ROAD', 'KING', 'RING', 'SNOW', 'WIND'] },
-    { name: 'Playful Four Letters', words: ['FIRE', 'DESK', 'BELL', 'KITE', 'DUCK'] },
-    { name: 'Farm And Forest Words', words: ['FROG', 'GOAT', 'BEAR', 'COAT', 'SHOE'] },
-    { name: 'Place Word Run', words: ['SOCK', 'ROSE', 'FARM', 'LAKE', 'TOWN'] },
-    { name: 'Four Letter Review', words: ['SHIP', 'FLAG', 'DRUM', 'WOLF', 'CORN'] },
-    { name: 'Five Letter Learner', words: ['APPLE', 'WATER', 'HOUSE', 'SMILE'] },
-    { name: 'Five Letter Challenge', words: ['PLANT', 'LIGHT', 'BREAD', 'MUSIC', 'GREEN'] },
-    { name: 'Moving World Words', words: ['TRAIN', 'RIVER', 'CLOUD', 'TABLE', 'CHAIR'] },
-    { name: 'Nature And Feeling Words', words: ['BEACH', 'GRASS', 'HEART', 'FRUIT', 'HONEY'] },
-    { name: 'Daily Word Builder', words: ['MONEY', 'NIGHT', 'CLOCK', 'PHONE', 'PAPER'] },
-    { name: 'Food And Animal Mix', words: ['PIZZA', 'QUEEN', 'SUGAR', 'TIGER', 'ZEBRA'] },
-    { name: 'Useful Five Letters', words: ['LEMON', 'HORSE', 'SHEEP', 'BRUSH', 'SPOON'] },
-    { name: 'Color And Clothes Set', words: ['SHIRT', 'DRESS', 'BLACK', 'WHITE', 'BROWN'] },
-    { name: 'Action And Earth Set', words: ['HAPPY', 'DANCE', 'DREAM', 'EARTH', 'GLASS'] },
-    { name: 'Six Word Five-Letter Trial', words: ['JUICE', 'MAGIC', 'OCEAN', 'PEACE', 'RADIO', 'STONE'] },
-    { name: 'Thinking Word Trial', words: ['STORY', 'WORLD', 'CROWN', 'BLOOM', 'BRAIN', 'FRAME'] },
-    { name: 'Travel Word Trial', words: ['FIELD', 'MOUSE', 'NURSE', 'PLANE', 'SNAKE', 'WHEEL'] },
-    { name: 'Sweet Review Chase', words: ['RULER', 'BERRY', 'CANDY', 'BUNNY', 'FAIRY', 'GIANT'] },
-    { name: 'Six Letter Explorer', words: ['ORANGE', 'SCHOOL', 'GARDEN', 'FRIEND'] },
-    { name: 'Six Letter Builder', words: ['BRIGHT', 'FAMILY', 'MARKET', 'WINDOW', 'FLOWER'] },
-    { name: 'World Sight Words', words: ['CAMERA', 'PLANET', 'FOREST', 'CASTLE', 'DESERT'] },
-    { name: 'Adventure Word Path', words: ['ISLAND', 'POCKET', 'ROCKET', 'PUZZLE', 'ANIMAL'] },
-    { name: 'Food Shape Mission', words: ['BANANA', 'BOTTLE', 'BUTTER', 'CHEESE', 'CIRCLE'] },
-    { name: 'Family Story Mission', words: ['DOCTOR', 'DRAGON', 'FATHER', 'MOTHER', 'GUITAR'] },
-    { name: 'Tool And Letter Mission', words: ['HAMMER', 'JACKET', 'KITTEN', 'LADDER', 'LETTER'] },
-    { name: 'Learning Place Mission', words: ['MONKEY', 'NATURE', 'OFFICE', 'PIRATE', 'PENCIL'] },
-    { name: 'Animal Season Mission', words: ['RABBIT', 'SILVER', 'SISTER', 'SUMMER', 'TURTLE'] },
-    { name: 'Color Season Mission', words: ['YELLOW', 'WINTER', 'WONDER', 'BASKET', 'BRIDGE'] },
-    { name: 'Six Word Safety Trial', words: ['CANDLE', 'CARROT', 'COOKIE', 'DANGER', 'ELEVEN', 'FINGER'] },
-    { name: 'Jungle Tool Trial', words: ['HELMET', 'INSECT', 'JUNGLE', 'KETTLE', 'NEEDLE', 'PILLOW'] },
-    { name: 'Kitchen Magic Trial', words: ['POTATO', 'TOMATO', 'WALLET', 'WIZARD', 'BUTTON', 'COTTON'] },
-    { name: 'People And Places Trial', words: ['CARPET', 'DRIVER', 'FARMER', 'GLOVES', 'HUNTER', 'MIRROR'] },
-    { name: 'Poetry Ribbon Trial', words: ['NAPKIN', 'ORIGIN', 'PARROT', 'POETRY', 'RIBBON', 'YELLOW'] },
-    { name: 'Mixed Word Sprint One', words: ['CAT', 'TREE', 'APPLE', 'ORANGE', 'DOG', 'FISH'] },
-    { name: 'Mixed Word Sprint Two', words: ['SUN', 'BOOK', 'WATER', 'SCHOOL', 'PEN', 'RAIN'] },
-    { name: 'Mixed Word Sprint Three', words: ['HAT', 'MOON', 'HOUSE', 'GARDEN', 'BUS', 'STAR'] },
-    { name: 'Mixed Word Sprint Four', words: ['CAR', 'MILK', 'SMILE', 'FRIEND', 'KEY', 'HOME'] },
-    { name: 'Word Serpent Master', words: ['MAP', 'BIRD', 'LIGHT', 'FLOWER', 'TOY', 'ROCKET'] },
+    { name: 'End Net Ten', letters: 'ENDT', words: ['END', 'NET', 'TEN'] },
+    { name: 'Cat Car Rat', letters: 'CATR', words: ['CAT', 'CAR', 'RAT', 'ART'] },
+    { name: 'Hat Eat Tea', letters: 'HATE', words: ['HAT', 'EAT', 'TEA', 'HEAT'] },
+    { name: 'Star Art Rat', letters: 'STAR', words: ['STAR', 'ART', 'RAT', 'TAR'] },
+    { name: 'Road Rod Oar', letters: 'ROAD', words: ['ROAD', 'ROD', 'OAR'] },
+    { name: 'Pink Ink Kin', letters: 'PINK', words: ['PINK', 'INK', 'KIN', 'NIP'] },
+    { name: 'Lamp Map Pal', letters: 'LAMP', words: ['LAMP', 'MAP', 'PAL'] },
+    { name: 'Cold Cod Old', letters: 'COLD', words: ['COLD', 'COD', 'OLD'] },
+    { name: 'Bear Bar Ear', letters: 'BEAR', words: ['BEAR', 'BAR', 'EAR', 'ARE'] },
+    { name: 'Fire Red Ear', letters: 'FIRED', words: ['FIRE', 'RED', 'DEER', 'RIDE', 'DIRE'] },
+    { name: 'Train Rain Art', letters: 'TRAIN', words: ['TRAIN', 'RAIN', 'ART', 'TIN', 'RAT'] },
+    { name: 'Plane Lane Pale', letters: 'PLANE', words: ['PLANE', 'LANE', 'PEN', 'NAP', 'PALE'] },
+    { name: 'Water Tear Rate', letters: 'WATER', words: ['WATER', 'TEAR', 'RATE', 'EAT', 'TARE'] },
+    { name: 'Smile Mile Lime', letters: 'SMILE', words: ['SMILE', 'MILE', 'LIME', 'SLIM', 'SIM'] },
+    { name: 'House Shoe Hose', letters: 'HOUSE', words: ['HOUSE', 'SHOE', 'HOSE', 'USE', 'SHE'] },
+    { name: 'Cloud Cold Loud', letters: 'CLOUD', words: ['CLOUD', 'COLD', 'LOUD', 'COD', 'OLD'] },
+    { name: 'Beach Each Bee', letters: 'BEACH', words: ['BEACH', 'EACH', 'BEE', 'ACHE', 'CAB'] },
+    { name: 'Heart Heat Ear', letters: 'HEART', words: ['HEART', 'HEAT', 'EAR', 'TEAR', 'HAT'] },
+    { name: 'Music Sum Sim', letters: 'MUSIC', words: ['MUSIC', 'SUM', 'SIM', 'SIC', 'MIMIC'] },
+    { name: 'Green Net Tree', letters: 'GRNET', words: ['GREEN', 'NET', 'TREE', 'TEN', 'ENTER'] },
+    { name: 'Planet Plant Lane', letters: 'PLANET', words: ['PLANET', 'PLANT', 'LANE', 'TEN', 'NAP'] },
+    { name: 'Market Make Team', letters: 'MARKET', words: ['MARKET', 'MAKE', 'TEAM', 'RATE', 'TAKE'] },
+    { name: 'Garden Danger Read', letters: 'GARDEN', words: ['GARDEN', 'DANGER', 'READ', 'DEAR', 'RANG'] },
+    { name: 'Castle Case Tale', letters: 'CASTLE', words: ['CASTLE', 'CASE', 'TALE', 'EAT', 'CAT'] },
+    { name: 'Friend Find Ride', letters: 'FRIEND', words: ['FRIEND', 'FIND', 'RIDE', 'FINE', 'END'] },
+    { name: 'Bridge Bird Ride', letters: 'BRIDGE', words: ['BRIDGE', 'BIRD', 'RIDE', 'GRID', 'DIG'] },
+    { name: 'Flower Wolf Fowl', letters: 'FLOWER', words: ['FLOWER', 'WOLF', 'FOWL', 'LOW', 'ROW'] },
+    { name: 'Orange Range Earn', letters: 'ORANGE', words: ['ORANGE', 'RANGE', 'EARN', 'NEAR', 'ROAR'] },
+    { name: 'School Cool Shoe', letters: 'SCHOLE', words: ['SCHOOL', 'COOL', 'SHOE', 'HOLE', 'LOSE'] },
+    { name: 'Bright Right Hit', letters: 'BRIGHT', words: ['BRIGHT', 'RIGHT', 'HIT', 'RIB', 'BIT'] },
+    { name: 'Family Mail Fail', letters: 'FAMILY', words: ['FAMILY', 'MAIL', 'FAIL', 'YAM', 'MAY'] },
+    { name: 'Window Down Now', letters: 'WINDOW', words: ['WINDOW', 'DOWN', 'OWN', 'NOW', 'NOD'] },
+    { name: 'Camera Race Care', letters: 'CAMERA', words: ['CAMERA', 'RACE', 'CARE', 'ACRE', 'ARM'] },
+    { name: 'Rocket Core Toe', letters: 'ROCKET', words: ['ROCKET', 'CORE', 'TOE', 'TREE', 'COT'] },
+    { name: 'Puzzle Pull Zed', letters: 'PUZLED', words: ['PUZZLE', 'PULL', 'DUEL', 'LED', 'ZED'] },
+    { name: 'Basket Bat Seat', letters: 'BASKET', words: ['BASKET', 'BAT', 'SEAT', 'TEA', 'EAT'] },
+    { name: 'Bridge Grid Dig', letters: 'BRIDGE', words: ['BRIDGE', 'GRID', 'DIG', 'RIB', 'BID'] },
+    { name: 'Button Bun Ton', letters: 'BUTON', words: ['BUTTON', 'BUN', 'TON', 'TUB', 'NUT'] },
+    { name: 'Cotton Ton Toon', letters: 'COTON', words: ['COTTON', 'TON', 'COOT', 'TOON', 'CON'] },
+    { name: 'Pocket Pot Toe', letters: 'POCKET', words: ['POCKET', 'POT', 'TOE', 'COP', 'TOP'] },
+    { name: 'Monkey Key Money', letters: 'MONKEY', words: ['MONKEY', 'MONEY', 'KEY', 'YEN', 'ONE'] },
+    { name: 'Nature Near Run', letters: 'NATURE', words: ['NATURE', 'NEAR', 'RUN', 'TUNE', 'TRUE'] },
+    { name: 'Pirate Pair Rate', letters: 'PIRATE', words: ['PIRATE', 'PAIR', 'RATE', 'TEA', 'TAP'] },
+    { name: 'Silver Live Rise', letters: 'SILVER', words: ['SILVER', 'LIVE', 'RISE', 'SIR', 'LIE'] },
+    { name: 'Winter Net Tin', letters: 'WINTER', words: ['WINTER', 'NET', 'TIN', 'TEN', 'RENT'] },
+    { name: 'Candle Land Lane', letters: 'CANDLE', words: ['CANDLE', 'LAND', 'LANE', 'DEAL', 'LEAN'] },
+    { name: 'Carrot Cart Rat', letters: 'CAROT', words: ['CARROT', 'CART', 'RAT', 'ROOT', 'TAR'] },
+    { name: 'Helmet Meet Them', letters: 'HELMET', words: ['HELMET', 'MEET', 'THEM', 'LET', 'HEM'] },
+    { name: 'Master Word Mix', letters: 'TRUSTD', words: ['TRUST', 'RUST', 'DUST', 'STUD', 'RUT'] },
 ];
 
 function makeQuestion(answer) {
@@ -329,19 +392,20 @@ function lengthLabel(words) {
     return `${sizes.join('/')} letter`;
 }
 
-function makeBrief(words, index) {
-    const count = words.length;
-    const label = lengthLabel(words);
+function makeBrief(plan, index) {
+    const count = plan.words.length;
+    const label = `${plan.letters.length}-letter bank`;
+    const bank = plan.letters.split('').join(' ');
     if (index < 7) {
-        return `Find ${count} short ${label} words. Eat each word letter-by-letter while steering safely.`;
+        return `Use ${bank} to find ${count} words. The same letters return after every apple.`;
     }
     if (index < 28) {
-        return `Find ${count} ${label} words. Read the clue, collect the letters, and keep the snake alive.`;
+        return `Use this ${label}: ${bank}. Find ${count} words while keeping the snake alive.`;
     }
     if (index < 44) {
-        return `Find ${count} ${label} words. Longer words mean a longer snake and sharper turns.`;
+        return `Use this ${label}: ${bank}. Longer finds mean a longer snake and sharper turns.`;
     }
-    return `Find ${count} mixed words. This review stage tests English memory and snake control together.`;
+    return `Use this ${label}: ${bank}. This review stage tests word memory and snake control together.`;
 }
 
 const stages = [
@@ -358,8 +422,9 @@ const stages = [
         title: `Stage ${index + 2}`,
         name: plan.name,
         kind: 'words',
-        brief: makeBrief(plan.words, index),
+        brief: makeBrief(plan, index),
         background: backgrounds[(index + 1) % backgrounds.length],
+        letterBank: plan.letters.split(''),
         targets: plan.words,
         questions: plan.words.map(makeQuestion),
     })),
@@ -381,6 +446,8 @@ const game = {
     wrong: 0,
     targetIndex: 0,
     letterIndex: 0,
+    currentAttempt: '',
+    foundWords: [],
     direction: { x: 1, y: 0 },
     nextDirection: { x: 1, y: 0 },
     snake: [],
@@ -400,10 +467,16 @@ function currentStage() {
 }
 
 function currentTarget() {
+    if (currentStage().kind === 'words') {
+        return game.currentAttempt;
+    }
     return currentStage().targets[game.targetIndex] || '';
 }
 
 function nextLetter() {
+    if (currentStage().kind === 'words') {
+        return '';
+    }
     return currentTarget()[game.letterIndex] || '';
 }
 
@@ -415,6 +488,8 @@ function resetGame(keepMessage = true) {
     game.wrong = 0;
     game.targetIndex = 0;
     game.letterIndex = 0;
+    game.currentAttempt = '';
+    game.foundWords = [];
     game.direction = { x: 1, y: 0 };
     game.nextDirection = { x: 1, y: 0 };
     game.snake = [
@@ -474,6 +549,11 @@ function preferredCorrectPosition(existing) {
 }
 
 function makeApples() {
+    if (currentStage().kind === 'words') {
+        makeWordApples();
+        return;
+    }
+
     const correct = nextLetter();
     if (!correct) {
         game.apples = [];
@@ -512,6 +592,23 @@ function makeApples() {
                 pulse: Math.random() * Math.PI * 2,
             });
         });
+}
+
+function makeWordApples() {
+    const stage = currentStage();
+    const letters = stage.letterBank || [];
+    game.apples = [];
+
+    letters.forEach(letter => {
+        const pos = uniquePosition(game.apples);
+        game.apples.push({
+            x: pos.x,
+            y: pos.y,
+            letter,
+            correct: true,
+            pulse: Math.random() * Math.PI * 2,
+        });
+    });
 }
 
 function startGame() {
@@ -577,6 +674,11 @@ function step() {
 }
 
 function eatApple(apple) {
+    if (currentStage().kind === 'words') {
+        eatWordApple(apple);
+        return;
+    }
+
     if (!apple.correct) {
         game.wrong++;
         game.snake.pop();
@@ -602,6 +704,70 @@ function eatApple(apple) {
     } else {
         makeApples();
     }
+}
+
+function remainingWords() {
+    return currentStage().targets.filter(word => !game.foundWords.includes(word));
+}
+
+function attemptState(attempt) {
+    const remaining = remainingWords();
+    if (remaining.includes(attempt)) {
+        return 'complete';
+    }
+    if (remaining.some(word => word.startsWith(attempt))) {
+        return 'prefix';
+    }
+    return 'invalid';
+}
+
+function eatWordApple(apple) {
+    const proposed = `${game.currentAttempt}${apple.letter}`;
+    const state = attemptState(proposed);
+
+    if (state === 'invalid') {
+        game.wrong++;
+        game.snake.pop();
+        game.currentAttempt = '';
+        burst(apple, '#d93b30');
+        setMood('wrong', 950);
+        showMessage('Try another word', `${proposed} is not in this stage.`);
+        window.setTimeout(hideMessage, 850);
+        makeApples();
+        return;
+    }
+
+    game.score++;
+    game.currentAttempt = proposed;
+    game.bodyLetters.unshift(apple.letter);
+    if (game.bodyLetters.length > game.snake.length - 1) {
+        game.bodyLetters.length = game.snake.length - 1;
+    }
+    burst(apple, state === 'complete' ? '#17a972' : '#e6a700');
+    setMood(state === 'complete' ? 'win' : 'eat', state === 'complete' ? 800 : 650);
+
+    if (state === 'complete') {
+        completeWord(proposed);
+        return;
+    }
+
+    makeApples();
+}
+
+function completeWord(word) {
+    game.foundWords.push(word);
+    game.targetIndex = game.foundWords.length;
+    game.currentAttempt = '';
+
+    if (game.foundWords.length >= currentStage().targets.length) {
+        winStage();
+        return;
+    }
+
+    makeApples();
+    showMessage('Word found', `${word} complete. Find ${currentStage().targets.length - game.foundWords.length} more.`);
+    updateUi();
+    window.setTimeout(hideMessage, 900);
 }
 
 function completeTarget() {
@@ -631,6 +797,7 @@ function winStage() {
     localStorage.setItem(key, String(Math.max(oldStars, stars)));
     showMessage('Stage complete', `You earned ${stars} star${stars === 1 ? '' : 's'}.`);
     updateUi();
+    updateStageCards();
     draw();
 }
 
@@ -650,6 +817,19 @@ function starCount() {
         return 2;
     }
     return 1;
+}
+
+function stageStars(index) {
+    return Number(localStorage.getItem(`starsEarnedStage${index + 1}`)) || 0;
+}
+
+function isStageUnlocked(index) {
+    return index === 0 || stageStars(index - 1) > 0;
+}
+
+function firstPlayableStage() {
+    const firstIncomplete = stages.findIndex((stage, index) => isStageUnlocked(index) && stageStars(index) === 0);
+    return firstIncomplete >= 0 ? firstIncomplete : 0;
 }
 
 function setMood(mood, duration = 800) {
@@ -1060,30 +1240,34 @@ function updateUi() {
     const stage = currentStage();
     ui.title.textContent = `${stage.title}: ${stage.name}`;
     ui.brief.textContent = stage.brief;
+    ui.gameStageLabel.textContent = stage.title;
+    ui.gameStageName.textContent = stage.name;
     ui.score.textContent = String(game.score);
-    ui.stars.textContent = String(Number(localStorage.getItem(`starsEarnedStage${game.stageIndex + 1}`)) || (game.won ? starCount() : 0));
-    ui.target.textContent = nextLetter() || 'Done';
-    ui.next.disabled = game.stageIndex >= stages.length - 1;
+    ui.stars.textContent = String(stageStars(game.stageIndex) || (game.won ? starCount() : 0));
+    ui.target.textContent = stage.kind === 'alphabet' ? (nextLetter() || 'Done') : `${game.foundWords.length}/${stage.targets.length}`;
+    ui.next.disabled = game.stageIndex >= stages.length - 1 || !isStageUnlocked(game.stageIndex + 1);
     ui.start.disabled = game.running && !game.paused && !game.won;
     ui.start.textContent = game.running && game.paused ? 'Resume' : 'Start';
     ui.pause.disabled = !game.running || game.won;
     updateProgress();
     updateQuestions();
     updateLetters();
+    updateLetterBank();
     updateStageButtons();
+    updateStageCards();
 }
 
 function updateProgress() {
     const stage = currentStage();
     const total = stage.targets.length;
-    const completed = Math.min(game.targetIndex, total);
+    const completed = stage.kind === 'alphabet' ? Math.min(game.targetIndex, total) : game.foundWords.length;
     const percent = total ? Math.round((completed / total) * 100) : 100;
     const label = stage.kind === 'alphabet' ? 'Letters' : 'Words';
     const current = stage.kind === 'alphabet'
         ? (nextLetter() || 'Done')
         : game.won
             ? 'Done'
-            : currentTarget().slice(0, game.letterIndex).padEnd(currentTarget().length, '_');
+            : game.currentAttempt || 'Build word';
 
     ui.progressLabel.textContent = `${label} ${completed}/${total}`;
     ui.progressPercent.textContent = `${percent}%`;
@@ -1094,21 +1278,29 @@ function updateProgress() {
 function updateQuestions() {
     const stage = currentStage();
     ui.questions.innerHTML = '';
-    if (!stage.questions.length) {
+    if (stage.kind === 'alphabet') {
         const item = document.createElement('li');
-        item.textContent = currentTarget() ? `Eat ${currentTarget()} in order.` : 'Complete';
+        item.textContent = nextLetter() ? `Eat ${nextLetter()} next, then continue A to Z.` : 'Alphabet complete.';
         ui.questions.appendChild(item);
         return;
     }
 
-    stage.questions.forEach((question, index) => {
+    if (!stage.questions.length) {
         const item = document.createElement('li');
-        const done = index < game.targetIndex;
+        item.textContent = 'Find words from the letter bank.';
+        ui.questions.appendChild(item);
+        return;
+    }
+
+    stage.questions.forEach(question => {
+        const item = document.createElement('li');
+        const done = game.foundWords.includes(question.answer);
         item.className = done ? 'is-done' : '';
+        const active = game.currentAttempt && question.answer.startsWith(game.currentAttempt);
         const shown = done
             ? question.answer
-            : index === game.targetIndex
-                ? currentTarget().slice(0, game.letterIndex).padEnd(currentTarget().length, '_')
+            : active
+                ? game.currentAttempt.padEnd(question.answer.length, '_')
                 : ''.padEnd(question.answer.length, '_');
         item.innerHTML = `${question.before}<span class="answer-slot">${shown}</span>${question.after}`;
         ui.questions.appendChild(item);
@@ -1125,11 +1317,40 @@ function updateLetters() {
     });
 }
 
+function updateLetterBank() {
+    ui.letterBank.innerHTML = '';
+    const stage = currentStage();
+    const letters = stage.kind === 'alphabet' ? alphabet.slice(game.targetIndex, game.targetIndex + 6) : stage.letterBank;
+    letters.forEach(letter => {
+        const chip = document.createElement('span');
+        chip.textContent = letter;
+        ui.letterBank.appendChild(chip);
+    });
+}
+
 function updateStageButtons() {
     Array.from(ui.stageList.children).forEach((button, index) => {
+        const locked = !isStageUnlocked(index);
         button.classList.toggle('is-active', index === game.stageIndex);
-        const stars = Number(localStorage.getItem(`starsEarnedStage${index + 1}`)) || 0;
-        button.textContent = stars ? `${index + 1} (${stars})` : String(index + 1);
+        button.classList.toggle('is-locked', locked);
+        button.disabled = locked;
+        const stars = stageStars(index);
+        button.textContent = locked ? 'Lock' : stars ? `${index + 1} (${stars})` : String(index + 1);
+    });
+}
+
+function updateStageCards() {
+    Array.from(ui.stageCards.children).forEach((card, index) => {
+        const locked = !isStageUnlocked(index);
+        const stars = stageStars(index);
+        card.classList.toggle('is-active', index === game.stageIndex);
+        card.classList.toggle('is-complete', stars > 0);
+        card.classList.toggle('is-locked', locked);
+        card.disabled = locked;
+        const status = card.querySelector('.stage-card-status');
+        if (status) {
+            status.textContent = locked ? 'Locked' : stars ? `${stars} star${stars === 1 ? '' : 's'}` : 'Ready';
+        }
     });
 }
 
@@ -1205,12 +1426,56 @@ function buildStageButtons() {
         const button = document.createElement('button');
         button.type = 'button';
         button.title = `${stage.title}: ${stage.name}`;
-        button.addEventListener('click', () => {
-            game.stageIndex = index;
-            resetGame();
-        });
+        button.addEventListener('click', () => openStage(index));
         ui.stageList.appendChild(button);
     });
+}
+
+function buildStageCards() {
+    stages.forEach((stage, index) => {
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = 'stage-card';
+        card.innerHTML = `
+            <span class="stage-card-number">${index + 1}</span>
+            <strong>${stage.name}</strong>
+            <span>${stage.kind === 'alphabet' ? 'A to Z' : (stage.letterBank || []).join(' ')}</span>
+            <em class="stage-card-status">Ready</em>
+        `;
+        card.addEventListener('click', () => openStage(index));
+        ui.stageCards.appendChild(card);
+    });
+}
+
+function openStage(index) {
+    if (!isStageUnlocked(index)) {
+        return;
+    }
+    game.stageIndex = index;
+    closeDrawer();
+    ui.homeScreen.classList.add('is-hidden');
+    ui.gameSurface.classList.remove('is-hidden');
+    resetGame();
+}
+
+function openHome() {
+    game.running = false;
+    game.paused = false;
+    clearTimeout(game.timer);
+    closeDrawer();
+    ui.gameSurface.classList.add('is-hidden');
+    ui.homeScreen.classList.remove('is-hidden');
+    updateStageCards();
+}
+
+function openDrawer() {
+    ui.drawer.classList.add('is-open');
+    ui.drawerScrim.classList.add('is-visible');
+}
+
+function closeDrawer() {
+    ui.drawer.classList.remove('is-open');
+    ui.drawerScrim.classList.remove('is-visible');
 }
 
 function togglePause() {
@@ -1247,19 +1512,20 @@ ui.start.addEventListener('click', startGame);
 ui.pause.addEventListener('click', togglePause);
 ui.replay.addEventListener('click', () => resetGame());
 ui.next.addEventListener('click', () => {
-    if (game.stageIndex < stages.length - 1) {
-        game.stageIndex++;
-        resetGame();
+    const nextStage = game.stageIndex + 1;
+    if (nextStage < stages.length && isStageUnlocked(nextStage)) {
+        openStage(nextStage);
     }
 });
+ui.continue.addEventListener('click', () => openStage(firstPlayableStage()));
+ui.home.addEventListener('click', openHome);
+ui.drawerButton.addEventListener('click', openDrawer);
+ui.closeDrawer.addEventListener('click', closeDrawer);
+ui.drawerScrim.addEventListener('click', closeDrawer);
 ui.sound.addEventListener('click', toggleSound);
 ui.speed.addEventListener('input', () => {
     localStorage.setItem('snakeSpeedPerfect', ui.speed.value);
     scheduleTick();
-});
-
-document.querySelectorAll('[data-dir]').forEach(button => {
-    button.addEventListener('click', () => setDirection(button.dataset.dir));
 });
 
 document.addEventListener('pointerdown', handleTapSteering, { passive: false });
@@ -1297,6 +1563,8 @@ if (savedSpeed >= 220 && savedSpeed <= 620) {
 }
 
 buildStageButtons();
-resetGame();
+buildStageCards();
+resetGame(false);
+openHome();
 requestAnimationFrame(animationLoop);
 window.wordSerpentGame = game;

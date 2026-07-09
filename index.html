@@ -4,19 +4,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Word Serpent</title>
-    <link rel="stylesheet" href="src/styles/perfect-game.css?v=6">
-    <script src="src/js/perfect-game.js?v=7" defer></script>
+    <link rel="stylesheet" href="src/styles/perfect-game.css?v=8">
+    <script src="src/js/perfect-game.js?v=8" defer></script>
 </head>
 <body>
     <main class="app-shell">
-        <section class="game-surface" aria-label="Word Serpent game">
-            <aside class="side-panel">
+        <section id="homeScreen" class="home-screen" aria-label="Word Serpent menu">
+            <div class="home-header">
                 <div class="brand-row">
                     <div class="mark" aria-hidden="true">S</div>
                     <div>
                         <h1>Word Serpent</h1>
                         <p id="stageKicker">50 Stage Word Challenge</p>
                     </div>
+                </div>
+
+                <div class="home-actions">
+                    <button id="continueButton" class="primary-button" type="button">Continue</button>
+                </div>
+            </div>
+
+            <section class="menu-panel">
+                <div class="menu-copy">
+                    <h2>Choose Stage</h2>
+                    <p>Complete stages one by one and unlock the next word challenge.</p>
+                </div>
+                <div id="stageCards" class="stage-card-grid" aria-label="Stage cards"></div>
+            </section>
+        </section>
+
+        <section id="gameSurface" class="game-surface is-hidden" aria-label="Word Serpent game">
+            <header class="game-topbar">
+                <button id="homeButton" type="button">Menu</button>
+                <div class="game-title-strip">
+                    <strong id="gameStageLabel">Stage 1</strong>
+                    <span id="gameStageName">Hungry Snake</span>
+                </div>
+                <button id="drawerButton" type="button">Mission</button>
+            </header>
+
+            <section class="play-panel">
+                <div class="progress-panel" aria-label="Stage progress">
+                    <div class="progress-summary">
+                        <span id="progressLabel">Words 0/0</span>
+                        <strong id="progressPercent">0%</strong>
+                    </div>
+                    <div class="progress-track" aria-hidden="true">
+                        <span id="progressFill"></span>
+                    </div>
+                    <div class="current-word-row">
+                        <span>Current</span>
+                        <strong id="currentWordValue">A</strong>
+                    </div>
+                    <div id="letterBank" class="letter-bank" aria-label="Available letters"></div>
+                </div>
+
+                <div class="canvas-wrap">
+                    <canvas id="gameCanvas" width="600" height="600"></canvas>
+                    <div id="messageOverlay" class="message-overlay is-visible">
+                        <strong id="messageTitle">Ready</strong>
+                        <span id="messageText">Choose a stage and press Start.</span>
+                    </div>
+                </div>
+
+                <div class="toolbar">
+                    <button id="startButton" class="primary-button" type="button">Start</button>
+                    <button id="pauseButton" type="button">Pause</button>
+                    <button id="replayButton" type="button">Replay</button>
+                    <button id="nextButton" type="button">Next</button>
+                </div>
+            </section>
+
+            <button id="drawerScrim" class="drawer-scrim" type="button" aria-label="Close mission menu"></button>
+
+            <aside id="sidePanel" class="side-panel" aria-label="Mission menu">
+                <div class="drawer-heading">
+                    <div class="brand-row">
+                        <div class="mark" aria-hidden="true">S</div>
+                        <div>
+                            <h2>Word Serpent</h2>
+                            <p>Stage mission</p>
+                        </div>
+                    </div>
+                    <button id="closeDrawerButton" type="button">Close</button>
                 </div>
 
                 <div class="stats-grid">
@@ -46,52 +116,15 @@
                     <div class="panel-label">Collected Letters</div>
                     <div id="letterTrail" class="letter-trail"></div>
                 </div>
-            </aside>
 
-            <section class="play-panel">
-                <div class="progress-panel" aria-label="Stage progress">
-                    <div class="progress-summary">
-                        <span id="progressLabel">Words 0/0</span>
-                        <strong id="progressPercent">0%</strong>
-                    </div>
-                    <div class="progress-track" aria-hidden="true">
-                        <span id="progressFill"></span>
-                    </div>
-                    <div class="current-word-row">
-                        <span>Current</span>
-                        <strong id="currentWordValue">A</strong>
-                    </div>
-                </div>
-
-                <div class="canvas-wrap">
-                    <canvas id="gameCanvas" width="600" height="600"></canvas>
-                    <div id="messageOverlay" class="message-overlay is-visible">
-                        <strong id="messageTitle">Ready</strong>
-                        <span id="messageText">Choose a stage and press Start.</span>
-                    </div>
-                </div>
-
-                <div class="toolbar">
-                    <button id="startButton" class="primary-button" type="button">Start</button>
-                    <button id="pauseButton" type="button">Pause</button>
-                    <button id="replayButton" type="button">Replay</button>
-                    <button id="nextButton" type="button">Next</button>
+                <div class="settings-panel">
                     <button id="soundButton" type="button" aria-pressed="false">Sound</button>
                     <label class="speed-control">
                         <span>Pace</span>
                         <input id="speedRange" type="range" min="220" max="620" step="10" value="360">
                     </label>
                 </div>
-
-                <div class="direction-pad" aria-label="Snake controls">
-                    <button type="button" data-dir="up">Up</button>
-                    <div>
-                        <button type="button" data-dir="left">Left</button>
-                        <button type="button" data-dir="down">Down</button>
-                        <button type="button" data-dir="right">Right</button>
-                    </div>
-                </div>
-            </section>
+            </aside>
         </section>
     </main>
 
