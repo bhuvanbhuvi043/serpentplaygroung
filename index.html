@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Word Serpent</title>
-    <link rel="stylesheet" href="src/styles/perfect-game.css?v=8">
-    <script src="src/js/perfect-game.js?v=8" defer></script>
+    <link rel="stylesheet" href="src/styles/perfect-game.css?v=9">
+    <script src="src/js/perfect-game.js?v=9" defer></script>
 </head>
 <body>
     <main class="app-shell">
@@ -15,7 +15,7 @@
                     <div class="mark" aria-hidden="true">S</div>
                     <div>
                         <h1>Word Serpent</h1>
-                        <p id="stageKicker">50 Stage Word Challenge</p>
+                        <p id="stageKicker">50 Word Finder Stages</p>
                     </div>
                 </div>
 
@@ -38,7 +38,7 @@
                 <button id="homeButton" type="button">Menu</button>
                 <div class="game-title-strip">
                     <strong id="gameStageLabel">Stage 1</strong>
-                    <span id="gameStageName">Hungry Snake</span>
+                    <span id="gameStageName">End Net Ten</span>
                 </div>
                 <button id="drawerButton" type="button">Mission</button>
             </header>
@@ -54,13 +54,13 @@
                     </div>
                     <div class="current-word-row">
                         <span>Current</span>
-                        <strong id="currentWordValue">A</strong>
+                        <strong id="currentWordValue">Build word</strong>
                     </div>
                     <div id="letterBank" class="letter-bank" aria-label="Available letters"></div>
                 </div>
 
                 <div class="canvas-wrap">
-                    <canvas id="gameCanvas" width="600" height="600"></canvas>
+                    <canvas id="gameCanvas" width="600" height="780"></canvas>
                     <div id="messageOverlay" class="message-overlay is-visible">
                         <strong id="messageTitle">Ready</strong>
                         <span id="messageText">Choose a stage and press Start.</span>
@@ -100,7 +100,7 @@
                     </div>
                     <div>
                         <span>Target</span>
-                        <strong id="targetValue">A</strong>
+                        <strong id="targetValue">0/3</strong>
                     </div>
                 </div>
 
@@ -128,8 +128,6 @@
         </section>
     </main>
 
-    <audio id="bgMusic" loop>
-        <source src="assets/audio/Komiku_Last_Boss_Lets_see_what_we_got.mp3" type="audio/mpeg">
-    </audio>
+    <audio id="bgMusic" loop></audio>
 </body>
 </html>

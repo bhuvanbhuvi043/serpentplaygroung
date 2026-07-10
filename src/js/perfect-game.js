@@ -40,7 +40,8 @@ const ui = {
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const tile = 30;
-const cells = 20;
+const cellsX = 20;
+const cellsY = 26;
 
 const backgrounds = [
     'assets/images/stage-3.jpg',
@@ -53,6 +54,19 @@ const backgrounds = [
     'assets/images/pexels-frans-van-heerden-1022692.jpg',
     'assets/images/pexels-tom-fisk-3765594.jpg',
     'assets/images/pexels-sebastiaan-stam-1480690.jpg',
+];
+
+const snakePalettes = [
+    { body: '#25a55f', dark: '#0a5835', mid: '#50d77b', glow: '#d7ffd2', belly: '#fff3a8', board: '#66d2c4' },
+    { body: '#2f8ee8', dark: '#164b8a', mid: '#65c7ff', glow: '#d7f4ff', belly: '#e6f5ff', board: '#7ec8df' },
+    { body: '#c05adf', dark: '#663188', mid: '#eb91ff', glow: '#f8ddff', belly: '#ffe4f8', board: '#cab8ea' },
+    { body: '#f08a33', dark: '#964715', mid: '#ffc15e', glow: '#fff0c1', belly: '#fff5cc', board: '#e8c17d' },
+    { body: '#de4f68', dark: '#84213b', mid: '#ff8797', glow: '#ffe0e6', belly: '#fff0f3', board: '#eaa2ad' },
+    { body: '#0f9f9a', dark: '#07585b', mid: '#42ded4', glow: '#cffffb', belly: '#dffcf6', board: '#7dd6cf' },
+    { body: '#7a63e8', dark: '#3b2f85', mid: '#a897ff', glow: '#e3ddff', belly: '#f0eaff', board: '#ada6df' },
+    { body: '#71a91f', dark: '#3f6514', mid: '#a8d93e', glow: '#efffc5', belly: '#fff6bd', board: '#a7cf7b' },
+    { body: '#d4542b', dark: '#813018', mid: '#ff8a5c', glow: '#ffe2d0', belly: '#fff1c9', board: '#d8a072' },
+    { body: '#2087a8', dark: '#10465d', mid: '#53c6e8', glow: '#d4f7ff', belly: '#e8fbff', board: '#8abed1' },
 ];
 
 const wordClues = {
@@ -324,6 +338,52 @@ const wordClues = {
     STUD: 'A small metal fastener is a ___.',
     RUST: 'Red-brown coating on old metal is ___.',
     TRUST: 'Belief that someone is honest is ___.',
+    BAR: 'A long solid piece can be a ___.',
+    ARE: 'A word used with you, we, or they is ___.',
+    NIP: 'A small bite can be a ___.',
+    DIRE: 'Very serious or urgent means ___.',
+    TARE: 'A weight allowance can be called ___.',
+    SIM: 'A phone card can be a ___.',
+    SIC: 'A word meaning intentionally written as shown is ___.',
+    MIMIC: 'To copy someone closely is to ___.',
+    RANG: 'A bell that made sound ___.',
+    FOWL: 'A bird kept for food can be called ___.',
+    LOW: 'Not high is ___.',
+    ROW: 'A line of things is a ___.',
+    ROAR: 'A lion can ___.',
+    LOSE: 'To fail to keep or win is to ___.',
+    BIT: 'A small piece is a ___.',
+    YAM: 'A starchy root vegetable is a ___.',
+    MAY: 'A word for permission or possibility is ___.',
+    NOD: 'A small head movement for yes is a ___.',
+    COT: 'A small bed is a ___.',
+    DUEL: 'A fight between two people is a ___.',
+    ZED: 'Another name for the letter Z is ___.',
+    SEAT: 'A place to sit is a ___.',
+    BID: 'An offer in an auction is a ___.',
+    BUN: 'A small round bread is a ___.',
+    TON: 'A very heavy weight can be a ___.',
+    TUB: 'A large container for washing is a ___.',
+    NUT: 'A hard-shelled seed is a ___.',
+    COOT: 'A dark water bird is a ___.',
+    CON: 'A trick or argument against something is a ___.',
+    COP: 'A police officer can be called a ___.',
+    TOP: 'The highest part is the ___.',
+    YEN: 'Money used in Japan is ___.',
+    ONE: 'The number before two is ___.',
+    TUNE: 'A melody is a ___.',
+    TRUE: 'Correct and real means ___.',
+    TAP: 'A light touch is a ___.',
+    SIR: 'A polite word for a man is ___.',
+    LIE: 'An untrue statement is a ___.',
+    RENT: 'Money paid to use a home is ___.',
+    LEAN: 'To rest against something is to ___.',
+    ROOT: 'The part of a plant underground is the ___.',
+    HEM: 'The folded edge of cloth is a ___.',
+    RUT: 'A deep track in the ground is a ___.',
+    SORT: 'To arrange things by type is to ___.',
+    REST: 'To relax is to ___.',
+    TOE: 'A part of the foot is a ___.',
 };
 
 const lessonStagePlans = [
@@ -376,6 +436,7 @@ const lessonStagePlans = [
     { name: 'Carrot Cart Rat', letters: 'CAROT', words: ['CARROT', 'CART', 'RAT', 'ROOT', 'TAR'] },
     { name: 'Helmet Meet Them', letters: 'HELMET', words: ['HELMET', 'MEET', 'THEM', 'LET', 'HEM'] },
     { name: 'Master Word Mix', letters: 'TRUSTD', words: ['TRUST', 'RUST', 'DUST', 'STUD', 'RUT'] },
+    { name: 'Forest Rose Sort', letters: 'FOREST', words: ['FOREST', 'ROSE', 'SORT', 'REST', 'TOE'] },
 ];
 
 function makeQuestion(answer) {
@@ -408,27 +469,34 @@ function makeBrief(plan, index) {
     return `Use this ${label}: ${bank}. This review stage tests word memory and snake control together.`;
 }
 
-const stages = [
-    {
-        title: 'Stage 1',
-        name: 'Hungry Snake',
-        kind: 'alphabet',
-        brief: 'Eat the alphabet from A to Z. The letters you eat travel along the snake body.',
-        background: backgrounds[0],
-        targets: alphabet,
-        questions: [],
-    },
-    ...lessonStagePlans.map((plan, index) => ({
-        title: `Stage ${index + 2}`,
-        name: plan.name,
-        kind: 'words',
-        brief: makeBrief(plan, index),
-        background: backgrounds[(index + 1) % backgrounds.length],
-        letterBank: plan.letters.split(''),
-        targets: plan.words,
-        questions: plan.words.map(makeQuestion),
-    })),
-];
+const stages = lessonStagePlans.map((plan, index) => ({
+    title: `Stage ${index + 1}`,
+    name: plan.name,
+    kind: 'words',
+    brief: makeBrief(plan, index),
+    background: backgrounds[index % backgrounds.length],
+    palette: snakePalettes[index % snakePalettes.length],
+    letterBank: plan.letters.split(''),
+    targets: plan.words,
+    questions: plan.words.map(makeQuestion),
+}));
+
+function migrateProgressVersion() {
+    const versionKey = 'wordSerpentProgressVersion';
+    const currentVersion = 'word-bank-v9';
+    if (localStorage.getItem(versionKey) === currentVersion) {
+        return;
+    }
+    const starKeys = [];
+    for (let index = 0; index < localStorage.length; index++) {
+        const key = localStorage.key(index);
+        if (key && key.startsWith('starsEarnedStage')) {
+            starKeys.push(key);
+        }
+    }
+    starKeys.forEach(key => localStorage.removeItem(key));
+    localStorage.setItem(versionKey, currentVersion);
+}
 
 const images = new Map();
 for (const stage of stages) {
@@ -462,6 +530,95 @@ const game = {
     moodUntil: 0,
 };
 
+const soundEngine = {
+    ctx: null,
+    musicTimer: null,
+    melodyIndex: 0,
+    voice: null,
+    melody: [392, 494, 587, 659, 587, 494, 440, 523],
+};
+
+function audioContext() {
+    if (!soundEngine.ctx) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) {
+            return null;
+        }
+        soundEngine.ctx = new AudioCtx();
+    }
+    if (soundEngine.ctx.state === 'suspended') {
+        soundEngine.ctx.resume();
+    }
+    return soundEngine.ctx;
+}
+
+function playTone(frequency, duration = 0.12, type = 'sine', gainValue = 0.04) {
+    if (game.muted) {
+        return;
+    }
+    const ctxAudio = audioContext();
+    if (!ctxAudio) {
+        return;
+    }
+    const oscillator = ctxAudio.createOscillator();
+    const gain = ctxAudio.createGain();
+    oscillator.type = type;
+    oscillator.frequency.value = frequency;
+    gain.gain.setValueAtTime(0.0001, ctxAudio.currentTime);
+    gain.gain.exponentialRampToValueAtTime(gainValue, ctxAudio.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctxAudio.currentTime + duration);
+    oscillator.connect(gain);
+    gain.connect(ctxAudio.destination);
+    oscillator.start();
+    oscillator.stop(ctxAudio.currentTime + duration + 0.02);
+}
+
+function startMusic() {
+    if (game.muted || soundEngine.musicTimer) {
+        return;
+    }
+    playTone(330, 0.16, 'triangle', 0.035);
+    soundEngine.musicTimer = window.setInterval(() => {
+        const note = soundEngine.melody[soundEngine.melodyIndex % soundEngine.melody.length];
+        soundEngine.melodyIndex++;
+        playTone(note, 0.1, soundEngine.melodyIndex % 3 === 0 ? 'triangle' : 'sine', 0.025);
+    }, 520);
+}
+
+function stopMusic() {
+    window.clearInterval(soundEngine.musicTimer);
+    soundEngine.musicTimer = null;
+}
+
+function chooseSnakeVoice() {
+    if (soundEngine.voice || !('speechSynthesis' in window)) {
+        return soundEngine.voice;
+    }
+    const voices = window.speechSynthesis.getVoices();
+    soundEngine.voice = voices.find(voice => /female|zira|jenny|aria|samantha|susan|karen|google uk english female/i.test(voice.name))
+        || voices.find(voice => /^en/i.test(voice.lang))
+        || voices[0]
+        || null;
+    return soundEngine.voice;
+}
+
+function speakSnake(text) {
+    if (game.muted || !('speechSynthesis' in window)) {
+        return;
+    }
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.voice = chooseSnakeVoice();
+    utterance.pitch = 1.28;
+    utterance.rate = 0.98;
+    utterance.volume = 0.78;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+}
+
+if ('speechSynthesis' in window && window.speechSynthesis.addEventListener) {
+    window.speechSynthesis.addEventListener('voiceschanged', chooseSnakeVoice);
+}
+
 function currentStage() {
     return stages[game.stageIndex];
 }
@@ -493,10 +650,10 @@ function resetGame(keepMessage = true) {
     game.direction = { x: 1, y: 0 };
     game.nextDirection = { x: 1, y: 0 };
     game.snake = [
-        { x: 5, y: 10 },
-        { x: 4, y: 10 },
-        { x: 3, y: 10 },
-        { x: 2, y: 10 },
+        { x: 5, y: Math.floor(cellsY / 2) },
+        { x: 4, y: Math.floor(cellsY / 2) },
+        { x: 3, y: Math.floor(cellsY / 2) },
+        { x: 2, y: Math.floor(cellsY / 2) },
     ];
     game.bodyLetters = [];
     game.particles = [];
@@ -513,8 +670,8 @@ function resetGame(keepMessage = true) {
 
 function randomCell() {
     return {
-        x: Math.floor(Math.random() * cells),
-        y: Math.floor(Math.random() * cells),
+        x: Math.floor(Math.random() * cellsX),
+        y: Math.floor(Math.random() * cellsY),
     };
 }
 
@@ -541,7 +698,7 @@ function preferredCorrectPosition(existing) {
             x: head.x + dir.x * distance,
             y: head.y + dir.y * distance,
         };
-        if (cell.x >= 0 && cell.y >= 0 && cell.x < cells && cell.y < cells && !isBlocked(cell, existing)) {
+        if (cell.x >= 0 && cell.y >= 0 && cell.x < cellsX && cell.y < cellsY && !isBlocked(cell, existing)) {
             return cell;
         }
     }
@@ -647,7 +804,7 @@ function step() {
         y: head.y + game.direction.y,
     };
 
-    if (newHead.x < 0 || newHead.y < 0 || newHead.x >= cells || newHead.y >= cells) {
+    if (newHead.x < 0 || newHead.y < 0 || newHead.x >= cellsX || newHead.y >= cellsY) {
         gameOver('The snake touched the wall.');
         return;
     }
@@ -730,6 +887,8 @@ function eatWordApple(apple) {
         game.snake.pop();
         game.currentAttempt = '';
         burst(apple, '#d93b30');
+        playTone(150, 0.18, 'sawtooth', 0.035);
+        speakSnake('Try again');
         setMood('wrong', 950);
         showMessage('Try another word', `${proposed} is not in this stage.`);
         window.setTimeout(hideMessage, 850);
@@ -744,6 +903,7 @@ function eatWordApple(apple) {
         game.bodyLetters.length = game.snake.length - 1;
     }
     burst(apple, state === 'complete' ? '#17a972' : '#e6a700');
+    playTone(state === 'complete' ? 740 : 520, state === 'complete' ? 0.18 : 0.08, 'triangle', 0.035);
     setMood(state === 'complete' ? 'win' : 'eat', state === 'complete' ? 800 : 650);
 
     if (state === 'complete') {
@@ -766,6 +926,7 @@ function completeWord(word) {
 
     makeApples();
     showMessage('Word found', `${word} complete. Find ${currentStage().targets.length - game.foundWords.length} more.`);
+    speakSnake(`Great. ${word}`);
     updateUi();
     window.setTimeout(hideMessage, 900);
 }
@@ -795,6 +956,9 @@ function winStage() {
     const key = `starsEarnedStage${game.stageIndex + 1}`;
     const oldStars = Number(localStorage.getItem(key)) || 0;
     localStorage.setItem(key, String(Math.max(oldStars, stars)));
+    playTone(880, 0.16, 'triangle', 0.04);
+    window.setTimeout(() => playTone(1175, 0.18, 'triangle', 0.04), 140);
+    speakSnake('Wonderful. Stage complete');
     showMessage('Stage complete', `You earned ${stars} star${stars === 1 ? '' : 's'}.`);
     updateUi();
     updateStageCards();
@@ -805,6 +969,8 @@ function gameOver(reason) {
     game.running = false;
     clearTimeout(game.timer);
     setMood('dead', 2500);
+    playTone(110, 0.28, 'sawtooth', 0.035);
+    speakSnake('Oh no. Try again');
     showMessage('Game over', reason);
     draw();
 }
@@ -874,7 +1040,7 @@ function animationLoop() {
 function drawBackground() {
     const stage = currentStage();
     const img = images.get(stage.background);
-    ctx.fillStyle = '#73cabf';
+    ctx.fillStyle = stage.palette.board;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     if (img && img.complete && img.naturalWidth > 0) {
         ctx.save();
@@ -888,11 +1054,13 @@ function drawGrid() {
     ctx.save();
     ctx.strokeStyle = 'rgba(255,255,255,0.16)';
     ctx.lineWidth = 1;
-    for (let i = 1; i < cells; i++) {
+    for (let i = 1; i < cellsX; i++) {
         ctx.beginPath();
         ctx.moveTo(i * tile, 0);
         ctx.lineTo(i * tile, canvas.height);
         ctx.stroke();
+    }
+    for (let i = 1; i < cellsY; i++) {
         ctx.beginPath();
         ctx.moveTo(0, i * tile);
         ctx.lineTo(canvas.width, i * tile);
@@ -964,6 +1132,7 @@ function directionAngle() {
 }
 
 function drawSnake() {
+    const palette = currentStage().palette;
     const points = game.snake.map(part => ({
         x: part.x * tile + tile / 2,
         y: part.y * tile + tile / 2,
@@ -971,9 +1140,9 @@ function drawSnake() {
 
     if (points.length > 1) {
         drawSnakePath(points, 'rgba(5, 36, 24, 0.42)', 34);
-        drawSnakePath(points, activeMood() === 'dead' ? '#3f4957' : '#0b5734', 30);
-        drawSnakePath(points, activeMood() === 'dead' ? '#657083' : '#38b466', 22);
-        drawSnakePath(points, activeMood() === 'dead' ? 'rgba(217,225,236,0.36)' : 'rgba(194, 255, 190, 0.34)', 8);
+        drawSnakePath(points, activeMood() === 'dead' ? '#3f4957' : palette.dark, 30);
+        drawSnakePath(points, activeMood() === 'dead' ? '#657083' : palette.body, 22);
+        drawSnakePath(points, activeMood() === 'dead' ? 'rgba(217,225,236,0.36)' : palette.glow, 8);
     }
 
     for (let i = game.snake.length - 1; i >= 1; i--) {
@@ -983,7 +1152,7 @@ function drawSnake() {
         ctx.save();
         ctx.translate(point.x, point.y);
         ctx.rotate(angle);
-        ctx.fillStyle = i % 2 === 0 ? 'rgba(245,255,216,0.34)' : 'rgba(12,78,42,0.26)';
+        ctx.fillStyle = i % 2 === 0 ? palette.belly : 'rgba(12,78,42,0.26)';
         ctx.beginPath();
         ctx.ellipse(-4, -6, 6.2, 3.5, -0.55, 0, Math.PI * 2);
         ctx.fill();
@@ -1015,7 +1184,7 @@ function drawSnake() {
         ctx.save();
         ctx.translate(tail.x, tail.y);
         ctx.rotate(tailAngle);
-        ctx.fillStyle = activeMood() === 'dead' ? '#657083' : '#21884e';
+        ctx.fillStyle = activeMood() === 'dead' ? '#657083' : palette.body;
         ctx.beginPath();
         ctx.moveTo(-18, 0);
         ctx.quadraticCurveTo(-2, -10, 12, -3);
@@ -1034,9 +1203,9 @@ function drawSnake() {
         headGradient.addColorStop(0, '#8892a3');
         headGradient.addColorStop(1, '#475162');
     } else {
-        headGradient.addColorStop(0, '#5fe17a');
-        headGradient.addColorStop(0.55, '#178146');
-        headGradient.addColorStop(1, '#0b4d30');
+        headGradient.addColorStop(0, palette.mid);
+        headGradient.addColorStop(0.55, palette.body);
+        headGradient.addColorStop(1, palette.dark);
     }
     ctx.fillStyle = headGradient;
     ctx.beginPath();
@@ -1244,7 +1413,7 @@ function updateUi() {
     ui.gameStageName.textContent = stage.name;
     ui.score.textContent = String(game.score);
     ui.stars.textContent = String(stageStars(game.stageIndex) || (game.won ? starCount() : 0));
-    ui.target.textContent = stage.kind === 'alphabet' ? (nextLetter() || 'Done') : `${game.foundWords.length}/${stage.targets.length}`;
+    ui.target.textContent = `${game.foundWords.length}/${stage.targets.length}`;
     ui.next.disabled = game.stageIndex >= stages.length - 1 || !isStageUnlocked(game.stageIndex + 1);
     ui.start.disabled = game.running && !game.paused && !game.won;
     ui.start.textContent = game.running && game.paused ? 'Resume' : 'Start';
@@ -1260,14 +1429,10 @@ function updateUi() {
 function updateProgress() {
     const stage = currentStage();
     const total = stage.targets.length;
-    const completed = stage.kind === 'alphabet' ? Math.min(game.targetIndex, total) : game.foundWords.length;
+    const completed = game.foundWords.length;
     const percent = total ? Math.round((completed / total) * 100) : 100;
-    const label = stage.kind === 'alphabet' ? 'Letters' : 'Words';
-    const current = stage.kind === 'alphabet'
-        ? (nextLetter() || 'Done')
-        : game.won
-            ? 'Done'
-            : game.currentAttempt || 'Build word';
+    const label = 'Words';
+    const current = game.won ? 'Done' : game.currentAttempt || 'Build word';
 
     ui.progressLabel.textContent = `${label} ${completed}/${total}`;
     ui.progressPercent.textContent = `${percent}%`;
@@ -1278,13 +1443,6 @@ function updateProgress() {
 function updateQuestions() {
     const stage = currentStage();
     ui.questions.innerHTML = '';
-    if (stage.kind === 'alphabet') {
-        const item = document.createElement('li');
-        item.textContent = nextLetter() ? `Eat ${nextLetter()} next, then continue A to Z.` : 'Alphabet complete.';
-        ui.questions.appendChild(item);
-        return;
-    }
-
     if (!stage.questions.length) {
         const item = document.createElement('li');
         item.textContent = 'Find words from the letter bank.';
@@ -1320,7 +1478,7 @@ function updateLetters() {
 function updateLetterBank() {
     ui.letterBank.innerHTML = '';
     const stage = currentStage();
-    const letters = stage.kind === 'alphabet' ? alphabet.slice(game.targetIndex, game.targetIndex + 6) : stage.letterBank;
+    const letters = stage.letterBank;
     letters.forEach(letter => {
         const chip = document.createElement('span');
         chip.textContent = letter;
@@ -1385,8 +1543,8 @@ function setDirection(name) {
 function directionFromTouch(clientX, clientY) {
     const rect = canvas.getBoundingClientRect();
     const head = game.snake[0];
-    const headX = rect.left + ((head.x + 0.5) / cells) * rect.width;
-    const headY = rect.top + ((head.y + 0.5) / cells) * rect.height;
+    const headX = rect.left + ((head.x + 0.5) / cellsX) * rect.width;
+    const headY = rect.top + ((head.y + 0.5) / cellsY) * rect.height;
     const dx = clientX - headX;
     const dy = clientY - headY;
     if (Math.abs(dx) > Math.abs(dy)) {
@@ -1436,10 +1594,14 @@ function buildStageCards() {
         const card = document.createElement('button');
         card.type = 'button';
         card.className = 'stage-card';
+        card.style.setProperty('--card-accent', stage.palette.body);
+        card.style.setProperty('--card-dark', stage.palette.dark);
+        card.style.setProperty('--card-soft', stage.palette.glow);
         card.innerHTML = `
             <span class="stage-card-number">${index + 1}</span>
+            <span class="stage-card-kicker">${stage.targets.length} words</span>
             <strong>${stage.name}</strong>
-            <span>${stage.kind === 'alphabet' ? 'A to Z' : (stage.letterBank || []).join(' ')}</span>
+            <span class="stage-card-bank">${(stage.letterBank || []).map(letter => `<b>${letter}</b>`).join('')}</span>
             <em class="stage-card-status">Ready</em>
         `;
         card.addEventListener('click', () => openStage(index));
@@ -1498,14 +1660,14 @@ function toggleSound() {
     ui.sound.setAttribute('aria-pressed', String(!game.muted));
     ui.sound.textContent = game.muted ? 'Sound' : 'Mute';
     if (game.muted) {
-        ui.music.pause();
+        stopMusic();
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+        }
         return;
     }
-    ui.music.play().catch(() => {
-        game.muted = true;
-        ui.sound.textContent = 'Sound';
-        ui.sound.setAttribute('aria-pressed', 'false');
-    });
+    startMusic();
+    speakSnake('Hello. Let us find words');
 }
 
 ui.start.addEventListener('click', startGame);
@@ -1562,6 +1724,7 @@ if (savedSpeed >= 220 && savedSpeed <= 620) {
     ui.speed.value = String(Math.max(savedSpeed, 360));
 }
 
+migrateProgressVersion();
 buildStageButtons();
 buildStageCards();
 resetGame(false);
