@@ -1,6 +1,6 @@
 # Word Serpent
 
-Word Serpent is a browser-based word-finder snake game. The root game uses a stage-card menu, a phone-fitted canvas engine, snake body letters, polished apple letters, reaction emojis, percentage-based stars, gold coins, paid clues, keyboard controls, queued mobile tap steering, generated music, and browser speech for the snake voice.
+Word Serpent is a browser-based word-finder snake game. The root game uses a stage-card menu, a phone-fitted canvas engine, wrap-around snake movement, snake body letters, polished apple letters, reaction emojis, percentage-based stars, gold coins, paid clues, keyboard controls, queued mobile tap steering, generated music, and browser speech for the snake voice.
 
 ## Folder structure
 
@@ -44,10 +44,12 @@ python -m http.server 8080
 - All 50 stages are English-learning word-finding missions built from reusable letter banks.
 - Stage 1 uses `E N D T`, so players can build `END`, `NET`, and `TEN`.
 - Stage letter banks keep respawning the same letters after each apple.
+- Target words stay secret until the player finds them.
+- The snake wraps from one border to the opposite side; only body collision ends the run.
 - Stage unlocks use cumulative stars: Stage 2 needs 1 star, Stage 3 needs 5 stars, and later stages rise gradually.
 - Stars are based on percentage of words found before winning or crashing.
-- Gold coins are earned from found words and improved stage-star results.
-- Clues cost coins and highlight the next useful letter with an arrow.
+- Gold coins are earned in small amounts from found words and improved stage-star results.
+- Clues cost 5 coins and highlight the next useful letter with an arrow.
 - Completed word letters are highlighted as color groups on the snake body.
 - Mobile players can tap or slide on the game surface to turn up, down, left, or right.
 - The game screen uses the real visible phone height so the toolbar stays inside the screen.

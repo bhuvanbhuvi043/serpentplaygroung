@@ -60,9 +60,10 @@ const tile = 30;
 const cellsX = 20;
 const cellsY = 26;
 const coinKey = 'wordSerpentGoldCoins';
-const starterCoins = 60;
-const clueCost = 12;
+const starterCoins = 20;
+const clueCost = 5;
 const wordHighlightColors = ['#ffe56a', '#7de7ff', '#ff9bc8', '#bcff72', '#ffb15c', '#c7a8ff'];
+const stageCardEmojis = ['🔎', '🪙', '⭐', '🍎', '💡', '🏆', '🎯', '✨', '🌟', '📚'];
 
 const backgrounds = [
     'assets/images/stage-3.jpg',
@@ -490,6 +491,51 @@ function makeBrief(plan, index) {
     return `Use this ${label}: ${bank}. This review stage tests word memory and snake control together.`;
 }
 
+function makeStageName(plan, index) {
+    return `${plan.letters.length}-letter secret hunt`;
+}
+
+function secretWordLabel(word) {
+    return ''.padEnd(word.length, '_');
+}
+
+function savedFoundWords(index) {
+    try {
+        const saved = JSON.parse(localStorage.getItem(`foundWordsStage${index + 1}`) || '[]');
+        return Array.isArray(saved) ? saved.filter(word => typeof word === 'string') : [];
+    } catch {
+        return [];
+    }
+}
+
+function saveFoundWord(word) {
+    const key = `foundWordsStage${game.stageIndex + 1}`;
+    const saved = savedFoundWords(game.stageIndex);
+    if (!saved.includes(word)) {
+        saved.push(word);
+        localStorage.setItem(key, JSON.stringify(saved));
+    }
+}
+
+function knownWordsForStage(index) {
+    const stage = stages[index];
+    const saved = new Set(savedFoundWords(index));
+    if (stageStars(index) >= 3) {
+        stage.targets.forEach(word => saved.add(word));
+    }
+    return saved;
+}
+
+function stageCardLine(index) {
+    if (index < 8) {
+        return 'Find secret words and collect coins.';
+    }
+    if (index < 28) {
+        return 'Use memory, steering, and clues wisely.';
+    }
+    return 'A sharper hunt for brave word masters.';
+}
+
 function requiredStarsForStage(index) {
     if (index === 0) {
         return 0;
@@ -505,9 +551,11 @@ function requiredStarsForStage(index) {
 
 const stages = lessonStagePlans.map((plan, index) => ({
     title: `Stage ${index + 1}`,
-    name: plan.words.join(' / '),
+    name: makeStageName(plan, index),
     kind: 'words',
     brief: makeBrief(plan, index),
+    cardLine: stageCardLine(index),
+    emoji: stageCardEmojis[index % stageCardEmojis.length],
     requiredStars: requiredStarsForStage(index),
     background: backgrounds[index % backgrounds.length],
     palette: snakePalettes[index % snakePalettes.length],
@@ -517,11 +565,14 @@ const stages = lessonStagePlans.map((plan, index) => ({
 
 function migrateProgressVersion() {
     const versionKey = 'wordSerpentProgressVersion';
-    const currentVersion = 'star-coin-v12';
+    const currentVersion = 'secret-wrap-v13';
     if (localStorage.getItem(versionKey) === currentVersion) {
         return;
     }
-    if (localStorage.getItem(coinKey) === null) {
+    const currentCoins = Number(localStorage.getItem(coinKey));
+    if (!Number.isFinite(currentCoins)) {
+        localStorage.setItem(coinKey, String(starterCoins));
+    } else if (currentCoins > starterCoins) {
         localStorage.setItem(coinKey, String(starterCoins));
     }
     localStorage.setItem(versionKey, currentVersion);
@@ -892,21 +943,25 @@ function step() {
     game.direction = game.nextDirection;
     const head = game.snake[0];
     const newHead = {
-        x: head.x + game.direction.x,
-        y: head.y + game.direction.y,
+        x: (head.x + game.direction.x + cellsX) % cellsX,
+        y: (head.y + game.direction.y + cellsY) % cellsY,
     };
-
-    if (newHead.x < 0 || newHead.y < 0 || newHead.x >= cellsX || newHead.y >= cellsY) {
-        gameOver('The snake touched the wall.');
-        return;
+    if (Math.abs(newHead.x - head.x) > 1 || Math.abs(newHead.y - head.y) > 1) {
+        game.touchCue = {
+            x: newHead.x * tile + tile / 2,
+            y: newHead.y * tile + tile / 2,
+            direction: game.direction.x ? (game.direction.x > 0 ? 'right' : 'left') : (game.direction.y > 0 ? 'down' : 'up'),
+            life: 14,
+        };
     }
 
-    if (game.snake.some(part => part.x === newHead.x && part.y === newHead.y)) {
+    const appleIndex = game.apples.findIndex(apple => apple.x === newHead.x && apple.y === newHead.y);
+    const bodyToCheck = appleIndex >= 0 ? game.snake : game.snake.slice(0, -1);
+    if (bodyToCheck.some(part => part.x === newHead.x && part.y === newHead.y)) {
         gameOver('The snake bumped into itself.');
         return;
     }
 
-    const appleIndex = game.apples.findIndex(apple => apple.x === newHead.x && apple.y === newHead.y);
     game.snake.unshift(newHead);
 
     if (appleIndex >= 0) {
@@ -1005,7 +1060,7 @@ function useClue() {
     const nextIndex = game.currentAttempt.length;
     const letter = target[nextIndex];
     if (!letter) {
-        showMessage('Finish word', `Complete ${target} or choose another word.`);
+        showMessage('Finish word', 'Complete the current word or choose another path.');
         return;
     }
     if (coinBalance() < clueCost) {
@@ -1021,7 +1076,7 @@ function useClue() {
     game.cluesUsed++;
     makeApples();
     showReaction('➡', letter);
-    showMessage('Clue used', `Look for ➡ ${letter} to build ${target}.`);
+    showMessage('Clue used', `Look for ➡ ${letter}.`);
     speakSnake(`Look for ${letter}`);
     updateUi();
     window.setTimeout(() => {
@@ -1086,6 +1141,7 @@ function completeWord(word) {
         game.bodyLetterMeta[index] = { word, color };
     }
     game.foundWords.push(word);
+    saveFoundWord(word);
     game.targetIndex = game.foundWords.length;
     game.currentAttempt = '';
     game.clueTarget = '';
@@ -1207,17 +1263,17 @@ function addCoins(amount) {
 }
 
 function wordCoinValue(word) {
-    return Math.max(6, word.length + 4);
+    return Math.min(8, Math.max(2, word.length - 1));
 }
 
 function stageBonusValue(stars) {
     if (stars >= 3) {
-        return 65;
+        return 20;
     }
     if (stars === 2) {
-        return 30;
+        return 10;
     }
-    return stars === 1 ? 15 : 0;
+    return stars === 1 ? 5 : 0;
 }
 
 function stageStars(index) {
@@ -1775,7 +1831,7 @@ function updateTargetWords() {
             ? word
             : active
                 ? game.currentAttempt.padEnd(word.length, '_')
-                : ''.padEnd(word.length, '_');
+                : secretWordLabel(word);
         ui.targets.appendChild(chip);
     });
 }
@@ -1826,6 +1882,7 @@ function updateStageCards() {
     Array.from(ui.stageCards.children).forEach((card, index) => {
         const locked = !isStageUnlocked(index);
         const stars = stageStars(index);
+        const knownWords = knownWordsForStage(index);
         card.classList.toggle('is-active', index === game.stageIndex);
         card.classList.toggle('is-complete', stars > 0);
         card.classList.toggle('is-locked', locked);
@@ -1837,6 +1894,12 @@ function updateStageCards() {
         const gate = card.querySelector('.stage-card-gate');
         if (gate) {
             gate.textContent = `Req ${stages[index].requiredStars}★`;
+        }
+        const targetWrap = card.querySelector('.stage-card-targets');
+        if (targetWrap) {
+            targetWrap.innerHTML = stages[index].targets
+                .map(word => `<b class="${knownWords.has(word) ? 'is-found' : ''}">${knownWords.has(word) ? word : secretWordLabel(word)}</b>`)
+                .join('');
         }
     });
 }
@@ -1958,12 +2021,15 @@ function buildStageCards() {
         card.style.setProperty('--card-accent', stage.palette.body);
         card.style.setProperty('--card-dark', stage.palette.dark);
         card.style.setProperty('--card-soft', stage.palette.glow);
+        card.dataset.emoji = stage.emoji;
         card.innerHTML = `
             <span class="stage-card-number">${index + 1}</span>
+            <span class="stage-card-emoji" aria-hidden="true">${stage.emoji}</span>
             <span class="stage-card-kicker">${stage.targets.length} words</span>
-            <strong>Find ${stage.targets.length} words</strong>
+            <strong>Secret Word Hunt</strong>
+            <span class="stage-card-line">${stage.cardLine}</span>
             <span class="stage-card-gate">Req ${stage.requiredStars}★</span>
-            <span class="stage-card-targets">${stage.targets.map(word => `<b>${word}</b>`).join('')}</span>
+            <span class="stage-card-targets">${stage.targets.map(word => `<b>${secretWordLabel(word)}</b>`).join('')}</span>
             <span class="stage-card-bank">${(stage.letterBank || []).map(letter => `<b>${letter}</b>`).join('')}</span>
             <em class="stage-card-status">Ready</em>
         `;
