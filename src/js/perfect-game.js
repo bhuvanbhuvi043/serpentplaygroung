@@ -1,6 +1,14 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
+function syncViewportHeight() {
+    document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`);
+}
+
+syncViewportHeight();
+window.addEventListener('resize', syncViewportHeight);
+window.addEventListener('orientationchange', () => window.setTimeout(syncViewportHeight, 120));
+
 const ui = {
     homeScreen: document.getElementById('homeScreen'),
     gameSurface: document.getElementById('gameSurface'),
@@ -29,6 +37,7 @@ const ui = {
     overlay: document.getElementById('messageOverlay'),
     messageTitle: document.getElementById('messageTitle'),
     messageText: document.getElementById('messageText'),
+    reaction: document.getElementById('reactionBubble'),
     start: document.getElementById('startButton'),
     pause: document.getElementById('pauseButton'),
     replay: document.getElementById('replayButton'),
@@ -518,14 +527,18 @@ const game = {
     foundWords: [],
     direction: { x: 1, y: 0 },
     nextDirection: { x: 1, y: 0 },
+    directionQueue: [],
     snake: [],
     bodyLetters: [],
     apples: [],
     particles: [],
     touchCue: null,
+    lastTouchTurnAt: 0,
     lastTick: 0,
     timer: null,
-    muted: true,
+    muted: false,
+    audioPrimed: false,
+    reactionTimer: null,
     mood: 'ready',
     moodUntil: 0,
 };
@@ -615,6 +628,34 @@ function speakSnake(text) {
     window.speechSynthesis.speak(utterance);
 }
 
+function updateSoundUi() {
+    ui.sound.setAttribute('aria-pressed', String(!game.muted));
+    ui.sound.textContent = game.muted ? 'Sound' : 'Mute';
+}
+
+function primeAudio(welcome = false) {
+    if (game.muted) {
+        return;
+    }
+    startMusic();
+    if (welcome && !game.audioPrimed) {
+        speakSnake('Hello. Let us find words');
+    }
+    game.audioPrimed = true;
+}
+
+function showReaction(emoji, label = '') {
+    if (!ui.reaction) {
+        return;
+    }
+    ui.reaction.textContent = label ? `${emoji} ${label}` : emoji;
+    ui.reaction.classList.add('is-visible');
+    window.clearTimeout(game.reactionTimer);
+    game.reactionTimer = window.setTimeout(() => {
+        ui.reaction.classList.remove('is-visible');
+    }, 900);
+}
+
 if ('speechSynthesis' in window && window.speechSynthesis.addEventListener) {
     window.speechSynthesis.addEventListener('voiceschanged', chooseSnakeVoice);
 }
@@ -649,6 +690,7 @@ function resetGame(keepMessage = true) {
     game.foundWords = [];
     game.direction = { x: 1, y: 0 };
     game.nextDirection = { x: 1, y: 0 };
+    game.directionQueue = [];
     game.snake = [
         { x: 5, y: Math.floor(cellsY / 2) },
         { x: 4, y: Math.floor(cellsY / 2) },
@@ -658,6 +700,7 @@ function resetGame(keepMessage = true) {
     game.bodyLetters = [];
     game.particles = [];
     game.touchCue = null;
+    game.lastTouchTurnAt = 0;
     game.mood = 'ready';
     game.moodUntil = 0;
     makeApples();
@@ -665,6 +708,7 @@ function resetGame(keepMessage = true) {
     draw();
     if (keepMessage) {
         showMessage('Ready', `${currentStage().title}: ${currentStage().name}`);
+        showReaction('🙂');
     }
 }
 
@@ -779,9 +823,11 @@ function startGame() {
     if (game.won) {
         resetGame(false);
     }
+    primeAudio(true);
     game.running = true;
     game.paused = false;
     setMood('focus', 900);
+    showReaction('🙂');
     hideMessage();
     game.lastTick = performance.now();
     scheduleTick();
@@ -797,6 +843,10 @@ function scheduleTick() {
 }
 
 function step() {
+    const queuedDirection = game.directionQueue.shift();
+    if (queuedDirection && queuedDirection.x + game.direction.x !== 0 && queuedDirection.y + game.direction.y !== 0) {
+        game.nextDirection = queuedDirection;
+    }
     game.direction = game.nextDirection;
     const head = game.snake[0];
     const newHead = {
@@ -841,6 +891,7 @@ function eatApple(apple) {
         game.snake.pop();
         burst(apple, '#d93b30');
         setMood('wrong', 900);
+        showReaction('😬');
         showMessage('Wrong apple', `Find ${nextLetter()} next.`);
         window.setTimeout(hideMessage, 700);
         makeApples();
@@ -849,6 +900,7 @@ function eatApple(apple) {
 
     game.score++;
     setMood('eat', 650);
+    showReaction('😋');
     game.bodyLetters.unshift(apple.letter);
     if (game.bodyLetters.length > game.snake.length - 1) {
         game.bodyLetters.length = game.snake.length - 1;
@@ -890,6 +942,7 @@ function eatWordApple(apple) {
         playTone(150, 0.18, 'sawtooth', 0.035);
         speakSnake('Try again');
         setMood('wrong', 950);
+        showReaction('😬');
         showMessage('Try another word', `${proposed} is not in this stage.`);
         window.setTimeout(hideMessage, 850);
         makeApples();
@@ -905,6 +958,7 @@ function eatWordApple(apple) {
     burst(apple, state === 'complete' ? '#17a972' : '#e6a700');
     playTone(state === 'complete' ? 740 : 520, state === 'complete' ? 0.18 : 0.08, 'triangle', 0.035);
     setMood(state === 'complete' ? 'win' : 'eat', state === 'complete' ? 800 : 650);
+    showReaction(state === 'complete' ? '🎉' : '😋');
 
     if (state === 'complete') {
         completeWord(proposed);
@@ -926,6 +980,7 @@ function completeWord(word) {
 
     makeApples();
     showMessage('Word found', `${word} complete. Find ${currentStage().targets.length - game.foundWords.length} more.`);
+    showReaction('🎉', word);
     speakSnake(`Great. ${word}`);
     updateUi();
     window.setTimeout(hideMessage, 900);
@@ -959,6 +1014,7 @@ function winStage() {
     playTone(880, 0.16, 'triangle', 0.04);
     window.setTimeout(() => playTone(1175, 0.18, 'triangle', 0.04), 140);
     speakSnake('Wonderful. Stage complete');
+    showReaction('🏆');
     showMessage('Stage complete', `You earned ${stars} star${stars === 1 ? '' : 's'}.`);
     updateUi();
     updateStageCards();
@@ -971,7 +1027,9 @@ function gameOver(reason) {
     setMood('dead', 2500);
     playTone(110, 0.28, 'sawtooth', 0.035);
     speakSnake('Oh no. Try again');
+    showReaction('😵');
     showMessage('Game over', reason);
+    updateUi();
     draw();
 }
 
@@ -1048,6 +1106,25 @@ function drawBackground() {
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         ctx.restore();
     }
+    const wash = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+    wash.addColorStop(0, 'rgba(255, 255, 255, 0.18)');
+    wash.addColorStop(0.45, 'rgba(255, 255, 255, 0.04)');
+    wash.addColorStop(1, 'rgba(15, 23, 42, 0.16)');
+    ctx.fillStyle = wash;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const vignette = ctx.createRadialGradient(
+        canvas.width * 0.5,
+        canvas.height * 0.38,
+        canvas.width * 0.2,
+        canvas.width * 0.5,
+        canvas.height * 0.48,
+        canvas.width * 0.78,
+    );
+    vignette.addColorStop(0, 'rgba(255, 255, 255, 0)');
+    vignette.addColorStop(1, 'rgba(8, 18, 30, 0.18)');
+    ctx.fillStyle = vignette;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
 function drawGrid() {
@@ -1160,6 +1237,12 @@ function drawSnake() {
         ctx.beginPath();
         ctx.ellipse(6, 5, 4.8, 2.5, -0.2, 0, Math.PI * 2);
         ctx.fill();
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+        ctx.beginPath();
+        ctx.arc(-8, 1, 2.1, 0, Math.PI * 2);
+        ctx.arc(3, -5, 1.8, 0, Math.PI * 2);
+        ctx.arc(7, 4, 1.6, 0, Math.PI * 2);
+        ctx.fill();
         ctx.restore();
 
         if (letter) {
@@ -1218,6 +1301,15 @@ function drawSnake() {
     ctx.fillStyle = 'rgba(220, 255, 205, 0.34)';
     ctx.beginPath();
     ctx.ellipse(head.x - 5, head.y - 7, 7, 4, directionAngle() - 0.35, 0, Math.PI * 2);
+    ctx.fill();
+
+    const angle = directionAngle();
+    const forward = { x: Math.cos(angle), y: Math.sin(angle) };
+    const side = { x: -forward.y, y: forward.x };
+    ctx.fillStyle = activeMood() === 'dead' ? 'rgba(226,232,240,0.4)' : palette.belly;
+    ctx.beginPath();
+    ctx.ellipse(head.x - forward.x * 4 + side.x * 10, head.y - forward.y * 4 + side.y * 10, 4.5, 2.8, angle, 0, Math.PI * 2);
+    ctx.ellipse(head.x - forward.x * 4 - side.x * 10, head.y - forward.y * 4 - side.y * 10, 4.5, 2.8, angle, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.shadowBlur = 0;
@@ -1533,10 +1625,29 @@ function setDirection(name) {
     if (!next) {
         return false;
     }
-    if (next.x + game.direction.x === 0 && next.y + game.direction.y === 0) {
+    const pending = game.directionQueue.length
+        ? game.directionQueue[game.directionQueue.length - 1]
+        : game.nextDirection || game.direction;
+    if (next.x === pending.x && next.y === pending.y) {
         return false;
     }
-    game.nextDirection = next;
+    if (next.x + pending.x === 0 && next.y + pending.y === 0) {
+        return false;
+    }
+    if (game.running && !game.paused && !game.won) {
+        const queueWasEmpty = game.directionQueue.length === 0;
+        if (game.directionQueue.length >= 3) {
+            game.directionQueue[game.directionQueue.length - 1] = next;
+        } else {
+            game.directionQueue.push(next);
+        }
+        if (queueWasEmpty) {
+            game.nextDirection = next;
+        }
+    } else {
+        game.directionQueue = [];
+        game.nextDirection = next;
+    }
     return true;
 }
 
@@ -1545,8 +1656,12 @@ function directionFromTouch(clientX, clientY) {
     const head = game.snake[0];
     const headX = rect.left + ((head.x + 0.5) / cellsX) * rect.width;
     const headY = rect.top + ((head.y + 0.5) / cellsY) * rect.height;
-    const dx = clientX - headX;
-    const dy = clientY - headY;
+    let dx = clientX - headX;
+    let dy = clientY - headY;
+    if (Math.abs(dx) < rect.width * 0.04 && Math.abs(dy) < rect.height * 0.04) {
+        dx = clientX - (rect.left + rect.width / 2);
+        dy = clientY - (rect.top + rect.height / 2);
+    }
     if (Math.abs(dx) > Math.abs(dy)) {
         return dx > 0 ? 'right' : 'left';
     }
@@ -1565,16 +1680,22 @@ function handleTapSteering(event) {
     if (target.closest('button, input, label, a, select, textarea, .side-panel')) {
         return;
     }
-    if (!target.closest('.play-panel') && !target.closest('.canvas-wrap')) {
+    if (!target.closest('.game-surface')) {
         return;
     }
     const isTouchLike = event.pointerType === 'touch' || event.pointerType === 'pen';
     if (!isTouchLike && !target.closest('.canvas-wrap')) {
         return;
     }
+    if (event.type === 'pointermove') {
+        if (!isTouchLike || Date.now() - game.lastTouchTurnAt < 70) {
+            return;
+        }
+    }
     event.preventDefault();
     const direction = directionFromTouch(event.clientX, event.clientY);
     if (setDirection(direction)) {
+        game.lastTouchTurnAt = Date.now();
         updateTouchCue(event.clientX, event.clientY, direction);
     }
 }
@@ -1613,11 +1734,14 @@ function openStage(index) {
     if (!isStageUnlocked(index)) {
         return;
     }
+    syncViewportHeight();
     game.stageIndex = index;
     closeDrawer();
+    document.body.classList.add('is-playing');
     ui.homeScreen.classList.add('is-hidden');
     ui.gameSurface.classList.remove('is-hidden');
     resetGame();
+    primeAudio(true);
 }
 
 function openHome() {
@@ -1625,6 +1749,7 @@ function openHome() {
     game.paused = false;
     clearTimeout(game.timer);
     closeDrawer();
+    document.body.classList.remove('is-playing');
     ui.gameSurface.classList.add('is-hidden');
     ui.homeScreen.classList.remove('is-hidden');
     updateStageCards();
@@ -1657,8 +1782,7 @@ function togglePause() {
 
 function toggleSound() {
     game.muted = !game.muted;
-    ui.sound.setAttribute('aria-pressed', String(!game.muted));
-    ui.sound.textContent = game.muted ? 'Sound' : 'Mute';
+    updateSoundUi();
     if (game.muted) {
         stopMusic();
         if ('speechSynthesis' in window) {
@@ -1691,6 +1815,7 @@ ui.speed.addEventListener('input', () => {
 });
 
 document.addEventListener('pointerdown', handleTapSteering, { passive: false });
+document.addEventListener('pointermove', handleTapSteering, { passive: false });
 
 window.addEventListener('keydown', event => {
     const map = {
@@ -1727,6 +1852,7 @@ if (savedSpeed >= 220 && savedSpeed <= 620) {
 migrateProgressVersion();
 buildStageButtons();
 buildStageCards();
+updateSoundUi();
 resetGame(false);
 openHome();
 requestAnimationFrame(animationLoop);

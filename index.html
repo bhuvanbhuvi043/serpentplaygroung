@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Word Serpent</title>
-    <link rel="stylesheet" href="src/styles/perfect-game.css?v=9">
-    <script src="src/js/perfect-game.js?v=9" defer></script>
+    <link rel="stylesheet" href="src/styles/perfect-game.css?v=11">
+    <script src="src/js/perfect-game.js?v=11" defer></script>
 </head>
 <body>
     <main class="app-shell">
@@ -61,6 +61,7 @@
 
                 <div class="canvas-wrap">
                     <canvas id="gameCanvas" width="600" height="780"></canvas>
+                    <div id="reactionBubble" class="reaction-bubble" aria-live="polite"></div>
                     <div id="messageOverlay" class="message-overlay is-visible">
                         <strong id="messageTitle">Ready</strong>
                         <span id="messageText">Choose a stage and press Start.</span>
@@ -118,7 +119,7 @@
                 </div>
 
                 <div class="settings-panel">
-                    <button id="soundButton" type="button" aria-pressed="false">Sound</button>
+                    <button id="soundButton" type="button" aria-pressed="true">Mute</button>
                     <label class="speed-control">
                         <span>Pace</span>
                         <input id="speedRange" type="range" min="220" max="620" step="10" value="360">
