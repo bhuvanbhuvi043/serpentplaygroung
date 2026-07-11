@@ -14,6 +14,7 @@ const ui = {
     gameSurface: document.getElementById('gameSurface'),
     stageCards: document.getElementById('stageCards'),
     stageList: document.getElementById('stageList'),
+    stageKicker: document.getElementById('stageKicker'),
     continue: document.getElementById('continueButton'),
     home: document.getElementById('homeButton'),
     drawer: document.getElementById('sidePanel'),
@@ -24,10 +25,12 @@ const ui = {
     gameStageName: document.getElementById('gameStageName'),
     score: document.getElementById('scoreValue'),
     stars: document.getElementById('starValue'),
+    coins: document.getElementById('coinValue'),
+    drawerCoins: document.getElementById('coinDrawerValue'),
     target: document.getElementById('targetValue'),
     title: document.getElementById('stageTitle'),
     brief: document.getElementById('stageBrief'),
-    questions: document.getElementById('questionList'),
+    targets: document.getElementById('targetWordList'),
     trail: document.getElementById('letterTrail'),
     progressLabel: document.getElementById('progressLabel'),
     progressPercent: document.getElementById('progressPercent'),
@@ -37,11 +40,16 @@ const ui = {
     overlay: document.getElementById('messageOverlay'),
     messageTitle: document.getElementById('messageTitle'),
     messageText: document.getElementById('messageText'),
+    resultActions: document.getElementById('resultActions'),
+    resultMenu: document.getElementById('resultMenuButton'),
+    resultReplay: document.getElementById('resultReplayButton'),
+    resultNext: document.getElementById('resultNextButton'),
     reaction: document.getElementById('reactionBubble'),
     start: document.getElementById('startButton'),
     pause: document.getElementById('pauseButton'),
     replay: document.getElementById('replayButton'),
     next: document.getElementById('nextButton'),
+    clue: document.getElementById('clueButton'),
     sound: document.getElementById('soundButton'),
     speed: document.getElementById('speedRange'),
     music: document.getElementById('bgMusic'),
@@ -51,6 +59,10 @@ const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const tile = 30;
 const cellsX = 20;
 const cellsY = 26;
+const coinKey = 'wordSerpentGoldCoins';
+const starterCoins = 60;
+const clueCost = 12;
+const wordHighlightColors = ['#ffe56a', '#7de7ff', '#ff9bc8', '#bcff72', '#ffb15c', '#c7a8ff'];
 
 const backgrounds = [
     'assets/images/stage-3.jpg',
@@ -478,32 +490,40 @@ function makeBrief(plan, index) {
     return `Use this ${label}: ${bank}. This review stage tests word memory and snake control together.`;
 }
 
+function requiredStarsForStage(index) {
+    if (index === 0) {
+        return 0;
+    }
+    if (index === 1) {
+        return 1;
+    }
+    if (index === 2) {
+        return 5;
+    }
+    return 5 + Math.ceil((index - 2) * 2.15);
+}
+
 const stages = lessonStagePlans.map((plan, index) => ({
     title: `Stage ${index + 1}`,
-    name: plan.name,
+    name: plan.words.join(' / '),
     kind: 'words',
     brief: makeBrief(plan, index),
+    requiredStars: requiredStarsForStage(index),
     background: backgrounds[index % backgrounds.length],
     palette: snakePalettes[index % snakePalettes.length],
     letterBank: plan.letters.split(''),
     targets: plan.words,
-    questions: plan.words.map(makeQuestion),
 }));
 
 function migrateProgressVersion() {
     const versionKey = 'wordSerpentProgressVersion';
-    const currentVersion = 'word-bank-v9';
+    const currentVersion = 'star-coin-v12';
     if (localStorage.getItem(versionKey) === currentVersion) {
         return;
     }
-    const starKeys = [];
-    for (let index = 0; index < localStorage.length; index++) {
-        const key = localStorage.key(index);
-        if (key && key.startsWith('starsEarnedStage')) {
-            starKeys.push(key);
-        }
+    if (localStorage.getItem(coinKey) === null) {
+        localStorage.setItem(coinKey, String(starterCoins));
     }
-    starKeys.forEach(key => localStorage.removeItem(key));
     localStorage.setItem(versionKey, currentVersion);
 }
 
@@ -530,9 +550,14 @@ const game = {
     directionQueue: [],
     snake: [],
     bodyLetters: [],
+    bodyLetterMeta: [],
     apples: [],
     particles: [],
     touchCue: null,
+    clueTarget: '',
+    clueLetter: '',
+    clueUntil: 0,
+    cluesUsed: 0,
     lastTouchTurnAt: 0,
     lastTick: 0,
     timer: null,
@@ -630,7 +655,9 @@ function speakSnake(text) {
 
 function updateSoundUi() {
     ui.sound.setAttribute('aria-pressed', String(!game.muted));
-    ui.sound.textContent = game.muted ? 'Sound' : 'Mute';
+    ui.sound.textContent = game.muted ? '🔇' : '🔊';
+    ui.sound.title = game.muted ? 'Turn sound on' : 'Mute sound';
+    ui.sound.setAttribute('aria-label', game.muted ? 'Turn sound on' : 'Mute sound');
 }
 
 function primeAudio(welcome = false) {
@@ -698,8 +725,13 @@ function resetGame(keepMessage = true) {
         { x: 2, y: Math.floor(cellsY / 2) },
     ];
     game.bodyLetters = [];
+    game.bodyLetterMeta = [];
     game.particles = [];
     game.touchCue = null;
+    game.clueTarget = '';
+    game.clueLetter = '';
+    game.clueUntil = 0;
+    game.cluesUsed = 0;
     game.lastTouchTurnAt = 0;
     game.mood = 'ready';
     game.moodUntil = 0;
@@ -807,9 +839,19 @@ function makeWordApples() {
             y: pos.y,
             letter,
             correct: true,
+            clue: hasActiveClue() && letter === game.clueLetter,
             pulse: Math.random() * Math.PI * 2,
         });
     });
+}
+
+function addBodyLetter(letter) {
+    game.bodyLetters.unshift(letter);
+    game.bodyLetterMeta.unshift(null);
+    if (game.bodyLetters.length > game.snake.length - 1) {
+        game.bodyLetters.length = game.snake.length - 1;
+        game.bodyLetterMeta.length = game.bodyLetters.length;
+    }
 }
 
 function startGame() {
@@ -901,10 +943,7 @@ function eatApple(apple) {
     game.score++;
     setMood('eat', 650);
     showReaction('😋');
-    game.bodyLetters.unshift(apple.letter);
-    if (game.bodyLetters.length > game.snake.length - 1) {
-        game.bodyLetters.length = game.snake.length - 1;
-    }
+    addBodyLetter(apple.letter);
     burst(apple, '#e6a700');
 
     game.letterIndex++;
@@ -917,6 +956,79 @@ function eatApple(apple) {
 
 function remainingWords() {
     return currentStage().targets.filter(word => !game.foundWords.includes(word));
+}
+
+function matchingRemainingWords() {
+    const remaining = remainingWords();
+    if (!game.currentAttempt) {
+        return remaining;
+    }
+    return remaining.filter(word => word.startsWith(game.currentAttempt));
+}
+
+function hasActiveClue() {
+    return Boolean(game.clueLetter) && Date.now() < game.clueUntil;
+}
+
+function chooseClueTarget() {
+    const matches = matchingRemainingWords();
+    if (matches.length) {
+        return matches.sort((a, b) => a.length - b.length || a.localeCompare(b))[0];
+    }
+    return remainingWords()[0] || '';
+}
+
+function clearClueIfUsed() {
+    if (!hasActiveClue()) {
+        game.clueLetter = '';
+        game.clueTarget = '';
+        return;
+    }
+    if (game.clueTarget && game.currentAttempt && !game.clueTarget.startsWith(game.currentAttempt)) {
+        game.clueLetter = '';
+        game.clueTarget = '';
+        return;
+    }
+    if (game.clueTarget && game.currentAttempt && game.clueTarget[game.currentAttempt.length - 1] === game.clueLetter) {
+        game.clueLetter = '';
+        game.clueTarget = '';
+        game.clueUntil = 0;
+    }
+}
+
+function useClue() {
+    const target = chooseClueTarget();
+    if (!target) {
+        showMessage('No clue needed', 'This stage has no remaining words.');
+        return;
+    }
+    const nextIndex = game.currentAttempt.length;
+    const letter = target[nextIndex];
+    if (!letter) {
+        showMessage('Finish word', `Complete ${target} or choose another word.`);
+        return;
+    }
+    if (coinBalance() < clueCost) {
+        showReaction('🪙', 'Need coins');
+        showMessage('Need coins', `A clue costs ${clueCost} coins. Find words to earn more.`);
+        window.setTimeout(hideMessage, 1000);
+        return;
+    }
+    setCoinBalance(coinBalance() - clueCost);
+    game.clueTarget = target;
+    game.clueLetter = letter;
+    game.clueUntil = Date.now() + 9000;
+    game.cluesUsed++;
+    makeApples();
+    showReaction('➡', letter);
+    showMessage('Clue used', `Look for ➡ ${letter} to build ${target}.`);
+    speakSnake(`Look for ${letter}`);
+    updateUi();
+    window.setTimeout(() => {
+        if (hasActiveClue()) {
+            hideMessage();
+        }
+    }, 1400);
 }
 
 function attemptState(attempt) {
@@ -938,6 +1050,8 @@ function eatWordApple(apple) {
         game.wrong++;
         game.snake.pop();
         game.currentAttempt = '';
+        game.clueLetter = '';
+        game.clueTarget = '';
         burst(apple, '#d93b30');
         playTone(150, 0.18, 'sawtooth', 0.035);
         speakSnake('Try again');
@@ -951,10 +1065,8 @@ function eatWordApple(apple) {
 
     game.score++;
     game.currentAttempt = proposed;
-    game.bodyLetters.unshift(apple.letter);
-    if (game.bodyLetters.length > game.snake.length - 1) {
-        game.bodyLetters.length = game.snake.length - 1;
-    }
+    clearClueIfUsed();
+    addBodyLetter(apple.letter);
     burst(apple, state === 'complete' ? '#17a972' : '#e6a700');
     playTone(state === 'complete' ? 740 : 520, state === 'complete' ? 0.18 : 0.08, 'triangle', 0.035);
     setMood(state === 'complete' ? 'win' : 'eat', state === 'complete' ? 800 : 650);
@@ -969,9 +1081,18 @@ function eatWordApple(apple) {
 }
 
 function completeWord(word) {
+    const color = wordHighlightColors[game.foundWords.length % wordHighlightColors.length];
+    for (let index = 0; index < word.length && index < game.bodyLetterMeta.length; index++) {
+        game.bodyLetterMeta[index] = { word, color };
+    }
     game.foundWords.push(word);
     game.targetIndex = game.foundWords.length;
     game.currentAttempt = '';
+    game.clueTarget = '';
+    game.clueLetter = '';
+    game.clueUntil = 0;
+    const coins = wordCoinValue(word);
+    addCoins(coins);
 
     if (game.foundWords.length >= currentStage().targets.length) {
         winStage();
@@ -979,8 +1100,8 @@ function completeWord(word) {
     }
 
     makeApples();
-    showMessage('Word found', `${word} complete. Find ${currentStage().targets.length - game.foundWords.length} more.`);
-    showReaction('🎉', word);
+    showMessage('Word found', `${word} complete. +${coins} coins. Find ${currentStage().targets.length - game.foundWords.length} more.`);
+    showReaction('🎉', `+${coins}`);
     speakSnake(`Great. ${word}`);
     updateUi();
     window.setTimeout(hideMessage, 900);
@@ -996,7 +1117,7 @@ function completeTarget() {
     }
 
     makeApples();
-    if (currentStage().questions.length) {
+    if (currentStage().targets.length) {
         showMessage('Word complete', `Next word: ${currentTarget()}`);
         window.setTimeout(hideMessage, 800);
     }
@@ -1008,14 +1129,15 @@ function winStage() {
     clearTimeout(game.timer);
     setMood('win', 2500);
     const stars = starCount();
-    const key = `starsEarnedStage${game.stageIndex + 1}`;
-    const oldStars = Number(localStorage.getItem(key)) || 0;
-    localStorage.setItem(key, String(Math.max(oldStars, stars)));
+    const result = saveStageStars(stars);
     playTone(880, 0.16, 'triangle', 0.04);
     window.setTimeout(() => playTone(1175, 0.18, 'triangle', 0.04), 140);
     speakSnake('Wonderful. Stage complete');
     showReaction('🏆');
-    showMessage('Stage complete', `You earned ${stars} star${stars === 1 ? '' : 's'}.`);
+    const nextLocked = game.stageIndex < stages.length - 1 && !isStageUnlocked(game.stageIndex + 1);
+    const lockText = nextLocked ? ` Need ${starsNeededFor(game.stageIndex + 1)} more stars for next stage.` : '';
+    const bonusText = result.bonus ? ` Bonus +${result.bonus} coins.` : '';
+    showMessage('Stage complete', `You earned ${stars} stars.${bonusText}${lockText}`, true);
     updateUi();
     updateStageCards();
     draw();
@@ -1023,36 +1145,111 @@ function winStage() {
 
 function gameOver(reason) {
     game.running = false;
+    game.won = true;
     clearTimeout(game.timer);
     setMood('dead', 2500);
     playTone(110, 0.28, 'sawtooth', 0.035);
-    speakSnake('Oh no. Try again');
-    showReaction('😵');
-    showMessage('Game over', reason);
+    const stars = starCount();
+    if (stars > 0) {
+        const result = saveStageStars(stars);
+        speakSnake('Stage saved. Try for more stars');
+        showReaction('⭐', `${stars}`);
+        const bonusText = result.bonus ? ` Bonus +${result.bonus} coins.` : '';
+        showMessage('Stage saved', `${reason} You found ${game.foundWords.length}/${currentStage().targets.length} words and kept ${stars} star${stars === 1 ? '' : 's'}.${bonusText}`, true);
+    } else {
+        speakSnake('Oh no. Try again');
+        showReaction('😵');
+        showMessage('Try again', `${reason} Find at least ${wordsNeededForOneStar()} word${wordsNeededForOneStar() === 1 ? '' : 's'} before crashing to keep 1 star.`, true);
+    }
     updateUi();
     draw();
 }
 
 function starCount() {
-    if (game.wrong === 0) {
+    const total = currentStage().targets.length || 1;
+    const percent = (game.foundWords.length / total) * 100;
+    if (percent >= 100) {
         return 3;
     }
-    if (game.wrong <= 3) {
+    if (percent >= 67) {
         return 2;
     }
-    return 1;
+    if (percent >= 34) {
+        return 1;
+    }
+    return 0;
+}
+
+function wordsNeededForOneStar() {
+    return Math.max(1, Math.ceil(currentStage().targets.length * 0.34));
+}
+
+function coinBalance() {
+    const saved = Number(localStorage.getItem(coinKey));
+    if (Number.isFinite(saved)) {
+        return saved;
+    }
+    localStorage.setItem(coinKey, String(starterCoins));
+    return starterCoins;
+}
+
+function setCoinBalance(value) {
+    localStorage.setItem(coinKey, String(Math.max(0, Math.floor(value))));
+}
+
+function addCoins(amount) {
+    if (!amount) {
+        return 0;
+    }
+    const nextValue = coinBalance() + amount;
+    setCoinBalance(nextValue);
+    return nextValue;
+}
+
+function wordCoinValue(word) {
+    return Math.max(6, word.length + 4);
+}
+
+function stageBonusValue(stars) {
+    if (stars >= 3) {
+        return 65;
+    }
+    if (stars === 2) {
+        return 30;
+    }
+    return stars === 1 ? 15 : 0;
 }
 
 function stageStars(index) {
     return Number(localStorage.getItem(`starsEarnedStage${index + 1}`)) || 0;
 }
 
+function saveStageStars(stars) {
+    const key = `starsEarnedStage${game.stageIndex + 1}`;
+    const oldStars = Number(localStorage.getItem(key)) || 0;
+    const earnedStars = Math.max(oldStars, stars);
+    localStorage.setItem(key, String(earnedStars));
+    const bonus = stars > oldStars ? stageBonusValue(stars) : 0;
+    if (bonus > 0) {
+        addCoins(bonus);
+    }
+    return { oldStars, earnedStars, bonus };
+}
+
+function totalStars() {
+    return stages.reduce((sum, stage, index) => sum + stageStars(index), 0);
+}
+
+function starsNeededFor(index) {
+    return Math.max(0, stages[index].requiredStars - totalStars());
+}
+
 function isStageUnlocked(index) {
-    return index === 0 || stageStars(index - 1) > 0;
+    return index >= 0 && index < stages.length && totalStars() >= stages[index].requiredStars;
 }
 
 function firstPlayableStage() {
-    const firstIncomplete = stages.findIndex((stage, index) => isStageUnlocked(index) && stageStars(index) === 0);
+    const firstIncomplete = stages.findIndex((stage, index) => isStageUnlocked(index) && stageStars(index) < 3);
     return firstIncomplete >= 0 ? firstIncomplete : 0;
 }
 
@@ -1169,6 +1366,19 @@ function drawApples() {
         ctx.lineWidth = 1.4;
         ctx.stroke();
 
+        if (apple.clue && hasActiveClue()) {
+            ctx.strokeStyle = '#ffe56a';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.arc(cx, cy + 2, tile * 0.58 + pulse, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.fillStyle = '#ffe56a';
+            ctx.font = '900 19px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('➡', cx, cy - 27);
+        }
+
         ctx.shadowBlur = 0;
         ctx.fillStyle = 'rgba(255,255,255,0.52)';
         ctx.beginPath();
@@ -1226,6 +1436,7 @@ function drawSnake() {
         const point = points[i];
         const angle = segmentAngle(points, i);
         const letter = game.bodyLetters[i - 1] || '';
+        const meta = game.bodyLetterMeta[i - 1];
         ctx.save();
         ctx.translate(point.x, point.y);
         ctx.rotate(angle);
@@ -1247,10 +1458,15 @@ function drawSnake() {
 
         if (letter) {
             ctx.save();
-            ctx.fillStyle = 'rgba(255,255,255,0.78)';
+            ctx.fillStyle = meta?.color || 'rgba(255,255,255,0.78)';
             ctx.beginPath();
             ctx.arc(point.x, point.y + 1, 10, 0, Math.PI * 2);
             ctx.fill();
+            if (meta?.color) {
+                ctx.strokeStyle = 'rgba(15, 23, 42, 0.35)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
             ctx.fillStyle = '#062c1a';
             ctx.font = '900 17px Arial';
             ctx.textAlign = 'center';
@@ -1503,15 +1719,26 @@ function updateUi() {
     ui.brief.textContent = stage.brief;
     ui.gameStageLabel.textContent = stage.title;
     ui.gameStageName.textContent = stage.name;
+    ui.stageKicker.textContent = `${totalStars()} total stars • ${coinBalance()} coins`;
     ui.score.textContent = String(game.score);
-    ui.stars.textContent = String(stageStars(game.stageIndex) || (game.won ? starCount() : 0));
+    ui.stars.textContent = `${starCount()}/3`;
+    ui.coins.textContent = String(coinBalance());
+    ui.drawerCoins.textContent = String(coinBalance());
     ui.target.textContent = `${game.foundWords.length}/${stage.targets.length}`;
     ui.next.disabled = game.stageIndex >= stages.length - 1 || !isStageUnlocked(game.stageIndex + 1);
+    ui.resultNext.disabled = ui.next.disabled;
     ui.start.disabled = game.running && !game.paused && !game.won;
-    ui.start.textContent = game.running && game.paused ? 'Resume' : 'Start';
+    ui.start.textContent = game.running && game.paused ? '▶' : '▶';
+    ui.start.title = game.running && game.paused ? 'Resume' : 'Start';
+    ui.start.setAttribute('aria-label', game.running && game.paused ? 'Resume' : 'Start');
     ui.pause.disabled = !game.running || game.won;
+    ui.pause.textContent = game.paused ? '▶' : 'Ⅱ';
+    ui.pause.title = game.paused ? 'Resume' : 'Pause';
+    ui.pause.setAttribute('aria-label', game.paused ? 'Resume' : 'Pause');
+    ui.clue.disabled = game.won || !remainingWords().length || coinBalance() < clueCost;
+    ui.clue.title = `Use clue (${clueCost} coins)`;
     updateProgress();
-    updateQuestions();
+    updateTargetWords();
     updateLetters();
     updateLetterBank();
     updateStageButtons();
@@ -1524,7 +1751,8 @@ function updateProgress() {
     const completed = game.foundWords.length;
     const percent = total ? Math.round((completed / total) * 100) : 100;
     const label = 'Words';
-    const current = game.won ? 'Done' : game.currentAttempt || 'Build word';
+    const clue = hasActiveClue() ? ` ➡ ${game.clueLetter}` : '';
+    const current = game.won ? 'Done' : `${game.currentAttempt || 'Build word'}${clue}`;
 
     ui.progressLabel.textContent = `${label} ${completed}/${total}`;
     ui.progressPercent.textContent = `${percent}%`;
@@ -1532,37 +1760,38 @@ function updateProgress() {
     ui.currentWord.textContent = current;
 }
 
-function updateQuestions() {
+function updateTargetWords() {
     const stage = currentStage();
-    ui.questions.innerHTML = '';
-    if (!stage.questions.length) {
-        const item = document.createElement('li');
-        item.textContent = 'Find words from the letter bank.';
-        ui.questions.appendChild(item);
-        return;
-    }
-
-    stage.questions.forEach(question => {
-        const item = document.createElement('li');
-        const done = game.foundWords.includes(question.answer);
-        item.className = done ? 'is-done' : '';
-        const active = game.currentAttempt && question.answer.startsWith(game.currentAttempt);
-        const shown = done
-            ? question.answer
+    ui.targets.innerHTML = '';
+    stage.targets.forEach((word, index) => {
+        const chip = document.createElement('span');
+        const done = game.foundWords.includes(word);
+        const active = !done && game.currentAttempt && word.startsWith(game.currentAttempt);
+        chip.className = `target-word ${done ? 'is-done' : ''} ${active ? 'is-active' : ''}`;
+        if (done) {
+            chip.style.setProperty('--word-color', wordHighlightColors[index % wordHighlightColors.length]);
+        }
+        chip.textContent = done
+            ? word
             : active
-                ? game.currentAttempt.padEnd(question.answer.length, '_')
-                : ''.padEnd(question.answer.length, '_');
-        item.innerHTML = `${question.before}<span class="answer-slot">${shown}</span>${question.after}`;
-        ui.questions.appendChild(item);
+                ? game.currentAttempt.padEnd(word.length, '_')
+                : ''.padEnd(word.length, '_');
+        ui.targets.appendChild(chip);
     });
 }
 
 function updateLetters() {
     ui.trail.innerHTML = '';
-    game.bodyLetters.slice(0, 18).forEach(letter => {
+    game.bodyLetters.slice(0, 18).forEach((letter, index) => {
         const chip = document.createElement('span');
         chip.className = 'letter-chip';
         chip.textContent = letter;
+        const meta = game.bodyLetterMeta[index];
+        if (meta?.color) {
+            chip.style.setProperty('--word-color', meta.color);
+            chip.classList.add('is-word');
+            chip.title = meta.word;
+        }
         ui.trail.appendChild(chip);
     });
 }
@@ -1574,6 +1803,10 @@ function updateLetterBank() {
     letters.forEach(letter => {
         const chip = document.createElement('span');
         chip.textContent = letter;
+        if (hasActiveClue() && letter === game.clueLetter) {
+            chip.className = 'is-clue';
+            chip.setAttribute('data-clue', '➡');
+        }
         ui.letterBank.appendChild(chip);
     });
 }
@@ -1585,7 +1818,7 @@ function updateStageButtons() {
         button.classList.toggle('is-locked', locked);
         button.disabled = locked;
         const stars = stageStars(index);
-        button.textContent = locked ? 'Lock' : stars ? `${index + 1} (${stars})` : String(index + 1);
+        button.textContent = locked ? `★${stages[index].requiredStars}` : stars ? `${index + 1}★${stars}` : String(index + 1);
     });
 }
 
@@ -1599,19 +1832,26 @@ function updateStageCards() {
         card.disabled = locked;
         const status = card.querySelector('.stage-card-status');
         if (status) {
-            status.textContent = locked ? 'Locked' : stars ? `${stars} star${stars === 1 ? '' : 's'}` : 'Ready';
+            status.textContent = locked ? `Need ${starsNeededFor(index)} more stars` : stars ? `${stars}/3 stars` : 'Ready';
+        }
+        const gate = card.querySelector('.stage-card-gate');
+        if (gate) {
+            gate.textContent = `Req ${stages[index].requiredStars}★`;
         }
     });
 }
 
-function showMessage(title, text) {
+function showMessage(title, text, showActions = false) {
     ui.messageTitle.textContent = title;
     ui.messageText.textContent = text;
     ui.overlay.classList.add('is-visible');
+    ui.resultActions.classList.toggle('is-hidden', !showActions);
+    ui.resultNext.disabled = game.stageIndex >= stages.length - 1 || !isStageUnlocked(game.stageIndex + 1);
 }
 
 function hideMessage() {
     ui.overlay.classList.remove('is-visible');
+    ui.resultActions.classList.add('is-hidden');
 }
 
 function setDirection(name) {
@@ -1721,7 +1961,9 @@ function buildStageCards() {
         card.innerHTML = `
             <span class="stage-card-number">${index + 1}</span>
             <span class="stage-card-kicker">${stage.targets.length} words</span>
-            <strong>${stage.name}</strong>
+            <strong>Find ${stage.targets.length} words</strong>
+            <span class="stage-card-gate">Req ${stage.requiredStars}★</span>
+            <span class="stage-card-targets">${stage.targets.map(word => `<b>${word}</b>`).join('')}</span>
             <span class="stage-card-bank">${(stage.letterBank || []).map(letter => `<b>${letter}</b>`).join('')}</span>
             <em class="stage-card-status">Ready</em>
         `;
@@ -1752,6 +1994,7 @@ function openHome() {
     document.body.classList.remove('is-playing');
     ui.gameSurface.classList.add('is-hidden');
     ui.homeScreen.classList.remove('is-hidden');
+    ui.stageKicker.textContent = `${totalStars()} total stars • ${coinBalance()} coins`;
     updateStageCards();
 }
 
@@ -1771,7 +2014,7 @@ function togglePause() {
     }
     game.paused = !game.paused;
     if (game.paused) {
-        showMessage('Paused', 'Press Pause again to continue.');
+        showMessage('Paused', 'Press play to continue.');
         clearTimeout(game.timer);
     } else {
         hideMessage();
@@ -1797,7 +2040,14 @@ function toggleSound() {
 ui.start.addEventListener('click', startGame);
 ui.pause.addEventListener('click', togglePause);
 ui.replay.addEventListener('click', () => resetGame());
+ui.resultReplay.addEventListener('click', () => resetGame());
 ui.next.addEventListener('click', () => {
+    const nextStage = game.stageIndex + 1;
+    if (nextStage < stages.length && isStageUnlocked(nextStage)) {
+        openStage(nextStage);
+    }
+});
+ui.resultNext.addEventListener('click', () => {
     const nextStage = game.stageIndex + 1;
     if (nextStage < stages.length && isStageUnlocked(nextStage)) {
         openStage(nextStage);
@@ -1805,9 +2055,11 @@ ui.next.addEventListener('click', () => {
 });
 ui.continue.addEventListener('click', () => openStage(firstPlayableStage()));
 ui.home.addEventListener('click', openHome);
+ui.resultMenu.addEventListener('click', openHome);
 ui.drawerButton.addEventListener('click', openDrawer);
 ui.closeDrawer.addEventListener('click', closeDrawer);
 ui.drawerScrim.addEventListener('click', closeDrawer);
+ui.clue.addEventListener('click', useClue);
 ui.sound.addEventListener('click', toggleSound);
 ui.speed.addEventListener('input', () => {
     localStorage.setItem('snakeSpeedPerfect', ui.speed.value);

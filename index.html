@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Word Serpent</title>
-    <link rel="stylesheet" href="src/styles/perfect-game.css?v=11">
-    <script src="src/js/perfect-game.js?v=11" defer></script>
+    <link rel="stylesheet" href="src/styles/perfect-game.css?v=12">
+    <script src="src/js/perfect-game.js?v=12" defer></script>
 </head>
 <body>
     <main class="app-shell">
@@ -35,12 +35,17 @@
 
         <section id="gameSurface" class="game-surface is-hidden" aria-label="Word Serpent game">
             <header class="game-topbar">
-                <button id="homeButton" type="button">Menu</button>
+                <button id="homeButton" class="icon-button" type="button" aria-label="Stage menu" title="Stage menu">⌂</button>
                 <div class="game-title-strip">
                     <strong id="gameStageLabel">Stage 1</strong>
                     <span id="gameStageName">End Net Ten</span>
                 </div>
-                <button id="drawerButton" type="button">Mission</button>
+                <div class="coin-pill" aria-label="Gold coins">
+                    <span aria-hidden="true">🪙</span>
+                    <strong id="coinValue">0</strong>
+                </div>
+                <button id="clueButton" class="icon-button clue-button" type="button" aria-label="Use clue" title="Use clue">💡</button>
+                <button id="drawerButton" class="icon-button" type="button" aria-label="Mission" title="Mission">☰</button>
             </header>
 
             <section class="play-panel">
@@ -65,14 +70,19 @@
                     <div id="messageOverlay" class="message-overlay is-visible">
                         <strong id="messageTitle">Ready</strong>
                         <span id="messageText">Choose a stage and press Start.</span>
+                        <div id="resultActions" class="result-actions is-hidden">
+                            <button id="resultMenuButton" type="button" aria-label="Stage menu" title="Stage menu">⌂</button>
+                            <button id="resultReplayButton" type="button" aria-label="Replay" title="Replay">↻</button>
+                            <button id="resultNextButton" class="primary-button" type="button" aria-label="Next stage" title="Next stage">➜</button>
+                        </div>
                     </div>
                 </div>
 
                 <div class="toolbar">
-                    <button id="startButton" class="primary-button" type="button">Start</button>
-                    <button id="pauseButton" type="button">Pause</button>
-                    <button id="replayButton" type="button">Replay</button>
-                    <button id="nextButton" type="button">Next</button>
+                    <button id="startButton" class="primary-button icon-button" type="button" aria-label="Start" title="Start">▶</button>
+                    <button id="pauseButton" class="icon-button" type="button" aria-label="Pause" title="Pause">Ⅱ</button>
+                    <button id="replayButton" class="icon-button" type="button" aria-label="Replay" title="Replay">↻</button>
+                    <button id="nextButton" class="icon-button" type="button" aria-label="Next stage" title="Next stage">➜</button>
                 </div>
             </section>
 
@@ -100,6 +110,10 @@
                         <strong id="starValue">0</strong>
                     </div>
                     <div>
+                        <span>Coins</span>
+                        <strong id="coinDrawerValue">0</strong>
+                    </div>
+                    <div>
                         <span>Target</span>
                         <strong id="targetValue">0/3</strong>
                     </div>
@@ -110,7 +124,7 @@
                 <section class="mission-panel">
                     <h2 id="stageTitle">Stage 1</h2>
                     <p id="stageBrief"></p>
-                    <ol id="questionList" class="question-list"></ol>
+                    <div id="targetWordList" class="target-word-list" aria-label="Target words"></div>
                 </section>
 
                 <div class="letters-panel">
@@ -119,7 +133,7 @@
                 </div>
 
                 <div class="settings-panel">
-                    <button id="soundButton" type="button" aria-pressed="true">Mute</button>
+                    <button id="soundButton" class="icon-button" type="button" aria-pressed="true" aria-label="Mute sound" title="Mute sound">🔊</button>
                     <label class="speed-control">
                         <span>Pace</span>
                         <input id="speedRange" type="range" min="220" max="620" step="10" value="360">
