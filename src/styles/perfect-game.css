@@ -95,22 +95,23 @@ body.is-playing .app-shell {
     display: flex;
     align-items: center;
     gap: 12px;
+    min-width: 0;
 }
 
-.mark {
-    display: grid;
-    place-items: center;
+.game-logo {
     flex: 0 0 auto;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: var(--green);
-    color: #fff;
-    font-weight: 800;
+    width: 58px;
+    height: 58px;
+    border: 1px solid rgba(18, 95, 55, 0.28);
+    border-radius: 12px;
+    background: #eef8f6;
+    box-shadow: 0 8px 16px rgba(20, 37, 63, 0.16);
+    object-fit: contain;
 }
 
 h1 {
-    font-size: 1.55rem;
+    font-size: 1.42rem;
+    line-height: 1.1;
 }
 
 #stageKicker,
@@ -646,6 +647,11 @@ h1 {
     gap: 12px;
 }
 
+.drawer-heading .game-logo {
+    width: 48px;
+    height: 48px;
+}
+
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -801,6 +807,15 @@ h1 {
     .home-header {
         align-items: stretch;
         flex-direction: column;
+    }
+
+    .game-logo {
+        width: 52px;
+        height: 52px;
+    }
+
+    h1 {
+        font-size: 1.2rem;
     }
 
     .home-actions {

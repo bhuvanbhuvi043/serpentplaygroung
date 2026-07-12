@@ -1,27 +1,44 @@
-# Word Serpent
+# Serpent Playground Word
 
-Word Serpent is a browser-based word-finder snake game. The root game uses a stage-card menu, a phone-fitted canvas engine, wrap-around snake movement, snake body letters, polished apple letters, reaction emojis, percentage-based stars, gold coins, paid clues, keyboard controls, queued mobile tap steering, generated music, and browser speech for the snake voice.
+Serpent Playground Word is a mobile-first word-finder snake game. Players guide a snake, collect letter apples, build hidden English words, earn stars and limited coins, unlock stages, and use paid clues when they need help.
 
-## Folder structure
+Version: 1.0.0
+
+Live game: https://bhuvanbhuvi043.github.io/serpentplaygroung/
+
+## Features
+
+- 50 secret word-finding stages.
+- Mobile tap steering across the game surface, plus keyboard controls on desktop.
+- Smooth wrap-around snake movement; only body collision ends the run.
+- Snake body letters and highlighted found-word groups.
+- Repeating stage letter banks so the same letters keep respawning after apples are eaten.
+- Stage cards with star unlock requirements.
+- Percentage progress, stage stars, limited coin rewards, and 5-coin clues.
+- Reaction emojis, generated background music, and browser speech for snake voice.
+- Responsive phone layout with a taller 20 by 26 play board.
+- Custom Serpent Playground Word logo and active board artwork.
+
+## Folder Structure
 
 ```text
 .
 |-- assets/
-|   |-- archives/       Original uploaded zip archive
-|   |-- audio/          Background music
-|   `-- images/         Game and stage artwork
+|   `-- images/         Logo and active board backgrounds
 |-- src/
-|   |-- js/             Home page and stage scripts
-|   `-- styles/         Home page and game styles
-|-- stages/             Legacy Stage 1 through Stage 7 pages
-|-- index.html          Rebuilt playable game
-|-- package.json        Convenience local-server scripts
+|   |-- js/
+|   |   `-- perfect-game.js
+|   `-- styles/
+|       `-- perfect-game.css
+|-- index.html          Playable game
+|-- package.json        Local static-server script
+|-- COPYRIGHT.md
 `-- LICENSE
 ```
 
-## Run locally
+## Run Locally
 
-Use any static file server from the project root:
+From the project root:
 
 ```bash
 npm start
@@ -33,31 +50,17 @@ Then open:
 http://localhost:8080
 ```
 
-You can also use Python if Node is not available:
+You can also run any static web server from this folder, because the game is a browser-only HTML, CSS, and JavaScript project.
 
-```bash
-python -m http.server 8080
-```
+## Gameplay Notes
 
-## Notes
+- Target words stay hidden until the player finds them.
+- Completed stage cards show the words already discovered.
+- Stage 1 starts with the letters `E N D T`, allowing words such as `END`, `NET`, and `TEN`.
+- Clues highlight the next useful letter and cost 5 coins.
+- Coins are intentionally limited so clues stay valuable.
+- Sound and snake speech start enabled and can be muted from the mission drawer.
 
-- All 50 stages are English-learning word-finding missions built from reusable letter banks.
-- Stage 1 uses `E N D T`, so players can build `END`, `NET`, and `TEN`.
-- Stage letter banks keep respawning the same letters after each apple.
-- Target words stay secret until the player finds them.
-- The snake wraps from one border to the opposite side; only body collision ends the run.
-- Stage unlocks use cumulative stars: Stage 2 needs 1 star, Stage 3 needs 5 stars, and later stages rise gradually.
-- Stars are based on percentage of words found before winning or crashing.
-- Gold coins are earned in small amounts from found words and improved stage-star results.
-- Clues cost 5 coins and highlight the next useful letter with an arrow.
-- Completed word letters are highlighted as color groups on the snake body.
-- Mobile players can tap or slide on the game surface to turn up, down, left, or right.
-- The game screen uses the real visible phone height so the toolbar stays inside the screen.
-- The taller mobile board uses a 20 by 26 grid for more play space.
-- The top progress bar shows completed words for the current stage.
-- The snake color changes by stage.
-- Sound and snake speech are enabled by default, with a Mute button in the Mission drawer.
-- The in-game Mission drawer holds stage buttons, clues, collected letters, sound, and pace settings.
-- The root `index.html` is the recommended playable game.
-- Legacy stage pages remain in `stages/` for reference.
-- The pace slider stores the selected pace in browser local storage.
+## Copyright And License
+
+Copyright (c) 2026 bhuvanbhuvi043. Released under the BSD 2-Clause License. See [LICENSE](LICENSE) and [COPYRIGHT.md](COPYRIGHT.md).

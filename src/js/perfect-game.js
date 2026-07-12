@@ -2,11 +2,13 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 function syncViewportHeight() {
-    document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`);
+    const viewportHeight = window.visualViewport?.height || window.innerHeight;
+    document.documentElement.style.setProperty('--app-height', `${viewportHeight}px`);
 }
 
 syncViewportHeight();
 window.addEventListener('resize', syncViewportHeight);
+window.visualViewport?.addEventListener('resize', syncViewportHeight);
 window.addEventListener('orientationchange', () => window.setTimeout(syncViewportHeight, 120));
 
 const ui = {
@@ -1482,10 +1484,11 @@ function drawSnake() {
     }));
 
     if (points.length > 1) {
-        drawSnakePath(points, 'rgba(5, 36, 24, 0.42)', 34);
-        drawSnakePath(points, activeMood() === 'dead' ? '#3f4957' : palette.dark, 30);
-        drawSnakePath(points, activeMood() === 'dead' ? '#657083' : palette.body, 22);
-        drawSnakePath(points, activeMood() === 'dead' ? 'rgba(217,225,236,0.36)' : palette.glow, 8);
+        const pathSegments = snakePathSegments(points);
+        drawSnakeSegments(pathSegments, 'rgba(5, 36, 24, 0.42)', 34);
+        drawSnakeSegments(pathSegments, activeMood() === 'dead' ? '#3f4957' : palette.dark, 30);
+        drawSnakeSegments(pathSegments, activeMood() === 'dead' ? '#657083' : palette.body, 22);
+        drawSnakeSegments(pathSegments, activeMood() === 'dead' ? 'rgba(217,225,236,0.36)' : palette.glow, 8);
     }
 
     for (let i = game.snake.length - 1; i >= 1; i--) {
@@ -1535,7 +1538,8 @@ function drawSnake() {
     if (points.length > 2) {
         const tail = points[points.length - 1];
         const beforeTail = points[points.length - 2];
-        const tailAngle = Math.atan2(tail.y - beforeTail.y, tail.x - beforeTail.x);
+        const nearBeforeTail = nearestWrappedPoint(tail, beforeTail);
+        const tailAngle = Math.atan2(tail.y - nearBeforeTail.y, tail.x - nearBeforeTail.x);
         ctx.save();
         ctx.translate(tail.x, tail.y);
         ctx.rotate(tailAngle);
@@ -1590,21 +1594,65 @@ function drawSnake() {
 }
 
 function segmentAngle(points, index) {
-    const prev = points[Math.max(0, index - 1)];
-    const next = points[Math.min(points.length - 1, index + 1)];
+    const current = points[index];
+    const prev = nearestWrappedPoint(current, points[Math.max(0, index - 1)]);
+    const next = nearestWrappedPoint(current, points[Math.min(points.length - 1, index + 1)]);
     return Math.atan2(prev.y - next.y, prev.x - next.x);
 }
 
-function drawSnakePath(points, color, width) {
+function nearestWrappedPoint(reference, point) {
+    const wrapped = { ...point };
+    if (Math.abs(wrapped.x - reference.x) > canvas.width / 2) {
+        wrapped.x += wrapped.x < reference.x ? canvas.width : -canvas.width;
+    }
+    if (Math.abs(wrapped.y - reference.y) > canvas.height / 2) {
+        wrapped.y += wrapped.y < reference.y ? canvas.height : -canvas.height;
+    }
+    return wrapped;
+}
+
+function isWrapJump(a, b) {
+    return Math.abs(a.x - b.x) > tile * 1.5 || Math.abs(a.y - b.y) > tile * 1.5;
+}
+
+function snakePathSegments(points) {
+    const segments = [];
+    let segment = [points[points.length - 1]];
+    for (let i = points.length - 2; i >= 0; i--) {
+        const point = points[i];
+        const previous = segment[segment.length - 1];
+        if (isWrapJump(previous, point)) {
+            if (segment.length > 1) {
+                segments.push(segment);
+            }
+            segment = [point];
+        } else {
+            segment.push(point);
+        }
+    }
+    if (segment.length > 1) {
+        segments.push(segment);
+    }
+    return segments;
+}
+
+function drawSnakeSegments(segments, color, width) {
+    segments.forEach(segment => drawSnakePath(segment, color, width));
+}
+
+function drawSnakePath(segment, color, width) {
+    if (segment.length < 2) {
+        return;
+    }
     ctx.save();
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     ctx.strokeStyle = color;
     ctx.lineWidth = width;
     ctx.beginPath();
-    ctx.moveTo(points[points.length - 1].x, points[points.length - 1].y);
-    for (let i = points.length - 2; i >= 0; i--) {
-        ctx.lineTo(points[i].x, points[i].y);
+    ctx.moveTo(segment[0].x, segment[0].y);
+    for (let i = 1; i < segment.length; i++) {
+        ctx.lineTo(segment[i].x, segment[i].y);
     }
     ctx.stroke();
     ctx.restore();
@@ -1980,6 +2028,7 @@ function updateTouchCue(clientX, clientY, direction) {
 
 function handleTapSteering(event) {
     const target = event.target;
+    const currentTarget = event.currentTarget;
     if (target.closest('button, input, label, a, select, textarea, .side-panel')) {
         return;
     }
@@ -1993,6 +2042,13 @@ function handleTapSteering(event) {
     if (event.type === 'pointermove') {
         if (!isTouchLike || Date.now() - game.lastTouchTurnAt < 70) {
             return;
+        }
+    }
+    if (event.type === 'pointerdown' && currentTarget.setPointerCapture) {
+        try {
+            currentTarget.setPointerCapture(event.pointerId);
+        } catch (error) {
+            // Some embedded browsers throw if capture is unavailable for this pointer.
         }
     }
     event.preventDefault();
@@ -2132,8 +2188,8 @@ ui.speed.addEventListener('input', () => {
     scheduleTick();
 });
 
-document.addEventListener('pointerdown', handleTapSteering, { passive: false });
-document.addEventListener('pointermove', handleTapSteering, { passive: false });
+ui.gameSurface.addEventListener('pointerdown', handleTapSteering, { passive: false });
+ui.gameSurface.addEventListener('pointermove', handleTapSteering, { passive: false });
 
 window.addEventListener('keydown', event => {
     const map = {
