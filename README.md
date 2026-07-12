@@ -32,6 +32,8 @@ Live game: https://bhuvanbhuvi043.github.io/serpentplaygroung/
 |       `-- perfect-game.css
 |-- index.html          Playable game
 |-- package.json        Local static-server script
+|-- privacy.html        Privacy policy for Play Store listing
+|-- PLAY_STORE_CHECKLIST.md
 |-- COPYRIGHT.md
 `-- LICENSE
 ```
@@ -64,3 +66,9 @@ You can also run any static web server from this folder, because the game is a b
 ## Copyright And License
 
 Copyright (c) 2026 bhuvanbhuvi043. Released under the BSD 2-Clause License. See [LICENSE](LICENSE) and [COPYRIGHT.md](COPYRIGHT.md).
+
+## Android Release
+
+The Android project is in `android/`. Release APK/AAB files are generated into `outputs/android/` and are intentionally not committed to Git.
+
+Use the AAB for Google Play Console and the APK for direct phone testing.

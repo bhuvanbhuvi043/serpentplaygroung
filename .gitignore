@@ -2,3 +2,12 @@ node_modules/
 .DS_Store
 Thumbs.db
 npm-debug.log*
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/keystore.properties
+android/keystore/
+android/keystore/*.jks
+android/keystore/*.keystore
+outputs/
